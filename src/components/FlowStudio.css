@@ -1,0 +1,1406 @@
+/* Flow studio overrides and flow-specific styles */
+
+/* Allow tooltip to show above elements (avoid clip by phone frame) */
+.flow-studio .phone-screen {
+  overflow: visible;
+}
+
+.flow-studio .phone-content {
+  overflow: visible;
+}
+
+.flow-studio .phone-preview-wrapper {
+  overflow: visible;
+}
+
+.flow-studio .preview-body {
+  overflow: visible;
+}
+
+/* So tooltip below category items isn't clipped */
+.flow-studio .preview-body.food-home .categories-row {
+  overflow: visible;
+}
+
+.flow-studio .preview-body.food-home .food-content {
+  overflow: visible;
+}
+
+/* Flow steps accordion – reference design (step cards + Add Step + End Message) */
+.flow-studio .flow-steps-accordion-body {
+  padding-top: 0;
+  background: #FAFAFA;
+  overflow: visible;
+}
+
+.flow-studio .flow-steps-sequence-v2 {
+  position: relative;
+  padding-left: 24px;
+  padding-right: 14px;
+  overflow: visible;
+}
+
+.flow-studio .flow-steps-sequence-v2::before {
+  content: '';
+  position: absolute;
+  left: 13px;
+  top: 14px;
+  bottom: 14px;
+  width: 2px;
+  background: #E5E7EB;
+  border-radius: 1px;
+  z-index: 0;
+}
+
+.flow-studio .flow-step-card-v2 {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+}
+
+.flow-studio .flow-step-number-circle-v2 {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #E5E7EB;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.flow-studio .flow-step-content-v2 {
+  flex: 1;
+  min-width: 0;
+}
+
+.flow-studio .flow-step-action-v2 {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1F2937;
+}
+
+.flow-studio .flow-step-action-v2 strong {
+  font-weight: 600;
+}
+
+.flow-studio .flow-step-desc-v2 {
+  margin: 0;
+  font-size: 12px;
+  color: #6B7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flow-studio .flow-step-card-v2 .flow-step-menu-wrap {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.flow-studio .flow-step-card-v2 .flow-step-menu-btn {
+  padding: 4px;
+  border: none;
+  background: none;
+  color: #6B7280;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.flow-studio .flow-step-card-v2 .flow-step-menu-btn:hover {
+  color: #374151;
+  background: #F3F4F6;
+}
+
+.flow-studio .flow-step-card-v2 .flow-step-menu-dropdown {
+  position: absolute;
+  bottom: 100%;
+  top: auto;
+  right: 0;
+  margin-bottom: 4px;
+  margin-top: 0;
+  min-width: 140px;
+  padding: 6px 0;
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  z-index: 20;
+}
+
+.flow-studio .flow-step-card-v2 .flow-step-menu-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 8px 14px;
+  border: none;
+  background: none;
+  font-size: 13px;
+  color: #374151;
+  cursor: pointer;
+  text-align: left;
+}
+
+.flow-studio .flow-step-card-v2 .flow-step-menu-dropdown button:hover {
+  background: #F3F4F6;
+}
+
+.flow-studio .flow-step-card-v2 .flow-step-menu-dropdown .flow-step-menu-delete:hover {
+  background: #FEF2F2;
+  color: #DC2626;
+}
+
+.flow-studio .flow-step-edit-form {
+  width: 100%;
+  padding-right: 32px;
+}
+
+.flow-studio .flow-step-edit-row {
+  margin-bottom: 8px;
+}
+
+.flow-studio .flow-step-edit-row label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6B7280;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.flow-studio .flow-step-edit-input {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 13px;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  color: #1F2937;
+  box-sizing: border-box;
+}
+
+.flow-studio .flow-step-edit-input:focus {
+  outline: none;
+  border-color: #E4590E;
+  box-shadow: 0 0 0 2px rgba(228, 89, 14, 0.15);
+}
+
+.flow-studio .flow-step-edit-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.flow-studio .flow-step-edit-cancel {
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6B7280;
+  background: #F3F4F6;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.flow-studio .flow-step-edit-cancel:hover {
+  background: #E5E7EB;
+}
+
+.flow-studio .flow-step-edit-done {
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  background: #E4590E;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.flow-studio .flow-step-edit-done:hover {
+  background: #C74913;
+}
+
+.flow-studio .flow-add-step-row-v2 {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+/* Add Step button: same width as step cards (full width of sequence) */
+.flow-studio .flow-add-step-btn-v2 {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #E4590E;
+  background: #FFFFFF;
+  border: 2px dashed #E4590E;
+  border-radius: 8px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.flow-studio .flow-add-step-btn-v2:hover {
+  background: #FFF7ED;
+  border-color: #C74913;
+  color: #C74913;
+}
+
+.flow-studio .flow-end-message-card-v2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.flow-studio .flow-end-flag-wrap {
+  background: #E5E7EB;
+  color: #6B7280;
+}
+
+.flow-studio .flow-end-message-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.flow-studio .flow-name-section {
+  margin-bottom: 16px;
+}
+
+.flow-studio .flow-name-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.flow-studio .flow-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #E8590E 0%, #C74913 100%);
+}
+
+.flow-studio .flow-name-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #374151;
+  background: transparent;
+}
+
+.flow-studio .flow-name-input::placeholder {
+  color: #9CA3AF;
+}
+
+.flow-studio .flow-details-btn {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  background: #F3F4F6;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.flow-studio .flow-details-btn:hover {
+  background: #E5E7EB;
+}
+
+/* Steps count header */
+.flow-studio .flow-steps-count-header {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 12px 0;
+}
+
+/* Sequence: steps + connector line + Add Step + End Message */
+.flow-studio .flow-steps-sequence {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-left: 20px;
+}
+
+.flow-studio .flow-steps-sequence::before {
+  content: '';
+  position: absolute;
+  left: 13px;
+  top: 12px;
+  bottom: 12px;
+  width: 2px;
+  background: #E5E7EB;
+  border-radius: 1px;
+  z-index: 0;
+}
+
+/* Step card: number circle + body (label + menu) */
+.flow-studio .flow-step-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+
+.flow-studio .flow-step-card:hover {
+  border-color: #D1D5DB;
+}
+
+.flow-studio .flow-step-card.active {
+  background: #EFF6FF;
+  border-color: #BFDBFE;
+}
+
+.flow-studio .flow-step-number-circle {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #E5E7EB;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.flow-studio .flow-step-card.active .flow-step-number-circle {
+  background: #DBEAFE;
+  color: #1D4ED8;
+}
+
+.flow-studio .flow-step-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.flow-studio .flow-step-branch-icon {
+  flex-shrink: 0;
+  color: #E4590E;
+}
+
+.flow-studio .flow-step-card-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flow-studio .flow-step-menu-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.flow-studio .flow-step-menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border: none;
+  background: none;
+  color: #6B7280;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.flow-studio .flow-step-menu-btn:hover {
+  color: #374151;
+  background: #F3F4F6;
+}
+
+.flow-studio .flow-step-menu-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  min-width: 180px;
+  padding: 6px 0;
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 20;
+}
+
+.flow-studio .flow-step-menu-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 8px 14px;
+  border: none;
+  background: none;
+  font-size: 13px;
+  color: #374151;
+  cursor: pointer;
+  text-align: left;
+}
+
+.flow-studio .flow-step-menu-dropdown button:hover {
+  background: #F3F4F6;
+}
+
+.flow-studio .flow-step-menu-dropdown .flow-step-menu-delete:hover {
+  background: #FEF2F2;
+  color: #DC2626;
+}
+
+/* Add Step block (dashed) */
+.flow-studio .flow-add-step-row-wrapper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.flow-studio .flow-step-connector-dot {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #F9FAFB;
+  border: 2px solid #E5E7EB;
+}
+
+.flow-studio .flow-add-step-block {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #E4590E;
+  background: #FFFBEB;
+  border: 2px dashed #E4590E;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.flow-studio .flow-add-step-block:hover {
+  background: #FFF7ED;
+  border-color: #C74913;
+  color: #C74913;
+}
+
+/* End Message card */
+.flow-studio .flow-end-message-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.flow-studio .flow-end-icon-wrap {
+  background: #E5E7EB;
+  color: #6B7280;
+}
+
+.flow-studio .flow-end-message-card .flow-step-card-label {
+  flex: 1;
+}
+
+.flow-studio .flow-end-flag-right {
+  color: #6B7280;
+  flex-shrink: 0;
+}
+
+/* Figma design reference under Flow steps */
+.flow-studio .flow-figma-design-section {
+  margin-bottom: 16px;
+}
+
+.flow-studio .flow-figma-design-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.flow-studio .flow-figma-design-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.flow-studio .flow-figma-design-status {
+  font-size: 12px;
+  color: #6B7280;
+}
+
+.flow-studio .flow-figma-design-status.loading {
+  color: #2563EB;
+}
+
+.flow-studio .flow-figma-design-status.error {
+  color: #DC2626;
+}
+
+.flow-studio .flow-figma-design-status.ok {
+  color: #059669;
+}
+
+.flow-studio .flow-figma-open-link {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: #0ACF83;
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.flow-studio .flow-figma-open-link:hover {
+  background: #09B574;
+  color: #fff;
+}
+
+.flow-studio .flow-figma-embed-hint {
+  margin: 0 0 12px 0;
+  font-size: 12px;
+  color: #6B7280;
+}
+
+.flow-studio .flow-figma-embed-wrap {
+  position: relative;
+  width: 100%;
+  min-height: 360px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #F9FAFB;
+}
+
+.flow-studio .flow-figma-embed {
+  display: block;
+  width: 100%;
+  height: 360px;
+  min-height: 360px;
+  border: none;
+}
+
+.flow-studio .flow-studio-header-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.flow-studio .flow-select-hint {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 12px;
+  background: #EFF6FF;
+  border-top: 1px solid #BFDBFE;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  color: #1E40AF;
+}
+
+.flow-studio .flow-cancel-select {
+  padding: 4px 10px;
+  border: 1px solid #3B82F6;
+  background: #fff;
+  color: #2563EB;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.flow-studio .flow-cancel-select:hover {
+  background: #EFF6FF;
+}
+
+/* Active step: element on app screen highlighted with blue, tooltip shown */
+.flow-studio .selectable-element.element-active {
+  outline: 2px solid #2563EB !important;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2) !important;
+  background-color: rgba(239, 246, 255, 0.6) !important;
+}
+
+/* Step card – hover (not selected): light blue fill only */
+.flow-studio .flow-step-card-v2:hover {
+  background: #EFF6FF;
+}
+
+.flow-studio .flow-step-card-v2 {
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+/* Step card selected: light blue fill + blue stroke */
+.flow-studio .flow-step-card-v2.flow-step-card-active {
+  background: #EFF6FF;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 1px #3B82F6;
+}
+
+.flow-studio .flow-step-card-v2.flow-step-card-active .flow-step-number-circle-v2 {
+  background: #DBEAFE;
+  color: #1D4ED8;
+}
+
+/* Selected card overrides hover so it doesn’t change when hovering */
+.flow-studio .flow-step-card-v2.flow-step-card-active:hover {
+  background: #EFF6FF;
+  border-color: #3B82F6;
+}
+
+.flow-studio .flow-step-card-v2 .flow-step-menu-wrap {
+  cursor: default;
+}
+
+/* Step tooltips on app screen */
+.flow-studio .flow-element-with-tooltip-wrap {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+}
+
+.flow-studio .flow-element-with-tooltip-wrap:has(.flow-step-tooltip) {
+  z-index: 40;
+  overflow: visible;
+}
+
+/* Tooltip below element so it isn't clipped by rows with overflow (e.g. categories-row) */
+.flow-studio .flow-step-tooltip {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  margin-top: 6px;
+  min-width: 160px;
+  max-width: 220px;
+  padding: 10px 12px;
+  background: #1F2937;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 13px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 50;
+  pointer-events: auto;
+  box-sizing: border-box;
+}
+
+/* Right-align tooltip when element is on right side of screen so it stays inside phone frame */
+.flow-studio .flow-step-tooltip-align-right {
+  left: auto;
+  right: 0;
+}
+
+.flow-studio .flow-step-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 16px;
+  border: 6px solid transparent;
+  border-bottom-color: #1F2937;
+}
+
+.flow-studio .flow-step-tooltip-align-right::after {
+  left: auto;
+  right: 16px;
+}
+
+.flow-studio .flow-step-tooltip-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.flow-studio .flow-step-tooltip-desc {
+  font-size: 12px;
+  color: #D1D5DB;
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+
+.flow-studio .flow-step-tooltip-ctas {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.flow-studio .flow-step-tooltip-btn {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.flow-studio .flow-step-tooltip-back {
+  background: #374151;
+  color: #fff;
+}
+
+.flow-studio .flow-step-tooltip-back:hover {
+  background: #4B5563;
+}
+
+.flow-studio .flow-step-tooltip-next {
+  background: #E4590E;
+  color: #fff;
+}
+
+.flow-studio .flow-step-tooltip-next:hover {
+  background: #C74913;
+}
+
+/* Configuration tab – four accordions with separators */
+.flow-studio .flow-config-accordions {
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.flow-studio .flow-config-accordions .flow-config-accordion-item {
+  border-bottom: 1px solid #E5E7EB;
+  background: #fff;
+}
+
+.flow-studio .flow-config-accordions .flow-config-accordion-item:last-child {
+  border-bottom: none;
+}
+
+.flow-studio .flow-config-accordions .accordion-header {
+  padding: 12px 16px;
+}
+
+.flow-studio .flow-config-accordions .accordion-title {
+  font-weight: 600;
+  color: #374151;
+  font-size: 14px;
+}
+
+.flow-studio .flow-config-accordions .accordion-body {
+  padding: 12px 16px 16px;
+  background: #FAFAFA;
+}
+
+/* Appearance – Tooltip section */
+.flow-studio .flow-appearance-tooltip-section {
+  padding: 0;
+}
+
+.flow-studio .flow-appearance-subheading {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 12px 0;
+}
+
+.flow-studio .flow-appearance-preview-box {
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+/* Preview: tooltip displays inline (same component as step tooltip) */
+.flow-studio .flow-appearance-preview-box .flow-step-tooltip {
+  position: relative;
+  top: auto;
+  left: auto;
+  margin: 0;
+  min-width: 200px;
+  max-width: 260px;
+}
+
+.flow-studio .flow-appearance-preview-box .flow-step-tooltip::after {
+  display: block;
+}
+
+.flow-studio .flow-appearance-theme-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.flow-studio .flow-appearance-theme-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.flow-studio .flow-appearance-change-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2563EB;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.flow-studio .flow-appearance-change-link:hover {
+  color: #1D4ED8;
+  text-decoration: underline;
+}
+
+.flow-studio .flow-appearance-color-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.flow-studio .flow-appearance-color-row:last-child {
+  margin-bottom: 0;
+}
+
+.flow-studio .flow-appearance-color-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.flow-studio .flow-appearance-color-input {
+  width: 36px;
+  height: 36px;
+  padding: 2px;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #fff;
+}
+
+/* Tooltip with header (step indicator + close) */
+.flow-studio .flow-step-tooltip-with-header .flow-step-tooltip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.flow-studio .flow-step-tooltip-step-indicator {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+}
+
+.flow-studio .flow-step-tooltip-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #fff;
+}
+
+.flow-studio .flow-step-tooltip-close:hover {
+  opacity: 0.85;
+}
+
+/* Position accordion – tooltip placement picker */
+.flow-studio .flow-position-picker {
+  padding: 8px 0;
+}
+
+.flow-studio .flow-position-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: auto auto auto auto auto;
+  gap: 4px;
+  align-items: center;
+  justify-items: center;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+.flow-studio .flow-position-cell {
+  position: relative;
+  width: 44px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #E5E7EB;
+  color: #9CA3AF;
+  font-size: 9px;
+  font-weight: 600;
+  --position-cell-color: #E5E7EB;
+}
+
+.flow-studio .flow-position-cell:disabled {
+  cursor: default;
+}
+
+.flow-studio .flow-position-cell.flow-position-available {
+  background: #6B7280;
+  --position-cell-color: #6B7280;
+  cursor: pointer;
+}
+
+.flow-studio .flow-position-cell.flow-position-available:hover {
+  background: #4B5563;
+}
+
+.flow-studio .flow-position-cell.flow-position-selected {
+  background: #E4590E;
+  --position-cell-color: #E4590E;
+  cursor: pointer;
+}
+
+.flow-studio .flow-position-cell.flow-position-selected:hover {
+  background: #C74913;
+}
+
+.flow-studio .flow-position-na-label {
+  position: relative;
+  z-index: 1;
+}
+
+.flow-studio .flow-position-cell.flow-position-selected .flow-position-na-label,
+.flow-studio .flow-position-cell.flow-position-available .flow-position-na-label {
+  display: none;
+}
+
+.flow-studio .flow-position-beak {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 5px solid transparent;
+  pointer-events: none;
+}
+
+.flow-studio .flow-position-cell .flow-position-beak {
+  border-color: transparent;
+}
+
+/* Top row – above center */
+.flow-studio .flow-position-top-left { grid-column: 2; grid-row: 1; }
+.flow-studio .flow-position-top { grid-column: 3; grid-row: 1; }
+.flow-studio .flow-position-top-right { grid-column: 4; grid-row: 1; }
+
+/* Left column */
+.flow-studio .flow-position-left-top { grid-column: 1; grid-row: 2; }
+.flow-studio .flow-position-left { grid-column: 1; grid-row: 3; }
+.flow-studio .flow-position-left-bottom { grid-column: 1; grid-row: 4; }
+
+/* Center */
+.flow-studio .flow-position-center {
+  grid-column: 2 / 5;
+  grid-row: 2 / 5;
+  width: 100%;
+  height: 100%;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #DC2626;
+  border-radius: 8px;
+  background: #FFF5F5;
+}
+
+.flow-studio .flow-position-center-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #E4590E;
+  letter-spacing: 0.02em;
+}
+
+/* Right column */
+.flow-studio .flow-position-right-top { grid-column: 5; grid-row: 2; }
+.flow-studio .flow-position-right { grid-column: 5; grid-row: 3; }
+.flow-studio .flow-position-right-bottom { grid-column: 5; grid-row: 4; }
+
+/* Bottom row */
+.flow-studio .flow-position-bottom-left { grid-column: 2; grid-row: 5; }
+.flow-studio .flow-position-bottom { grid-column: 3; grid-row: 5; }
+.flow-studio .flow-position-bottom-right { grid-column: 4; grid-row: 5; }
+
+/* Beak points toward center: base of triangle is the colored border */
+.flow-studio .flow-position-top-left .flow-position-beak,
+.flow-studio .flow-position-top .flow-position-beak,
+.flow-studio .flow-position-top-right .flow-position-beak {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-top: none;
+  border-bottom-color: var(--position-cell-color);
+  border-left-color: transparent !important;
+  border-right-color: transparent !important;
+}
+
+.flow-studio .flow-position-bottom-left .flow-position-beak,
+.flow-studio .flow-position-bottom .flow-position-beak,
+.flow-studio .flow-position-bottom-right .flow-position-beak {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-bottom: none;
+  border-top-color: var(--position-cell-color);
+  border-left-color: transparent !important;
+  border-right-color: transparent !important;
+}
+
+.flow-studio .flow-position-left-top .flow-position-beak,
+.flow-studio .flow-position-left .flow-position-beak,
+.flow-studio .flow-position-left-bottom .flow-position-beak {
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left: none;
+  border-right-color: var(--position-cell-color);
+  border-top-color: transparent !important;
+  border-bottom-color: transparent !important;
+}
+
+.flow-studio .flow-position-right-top .flow-position-beak,
+.flow-studio .flow-position-right .flow-position-beak,
+.flow-studio .flow-position-right-bottom .flow-position-beak {
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-right: none;
+  border-left-color: var(--position-cell-color);
+  border-top-color: transparent !important;
+  border-bottom-color: transparent !important;
+}
+
+/* Step Completion Rules accordion */
+.flow-studio .flow-completion-rules {
+  padding: 0;
+}
+
+.flow-studio .flow-completion-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.flow-studio .flow-completion-radio-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #6B7280;
+}
+
+.flow-studio .flow-completion-radio {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: #2563EB;
+  cursor: pointer;
+}
+
+.flow-studio .flow-completion-radio:checked + .flow-completion-radio-label {
+  color: #374151;
+}
+
+.flow-studio .flow-completion-rule-section {
+  margin-top: 12px;
+}
+
+.flow-studio .flow-completion-rule-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.flow-studio .flow-completion-rule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.flow-studio .flow-completion-dropdown-wrap {
+  position: relative;
+}
+
+.flow-studio .flow-completion-dropdown-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #374151;
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.flow-studio .flow-completion-dropdown-trigger:hover {
+  border-color: #D1D5DB;
+}
+
+.flow-studio .flow-completion-chevron {
+  color: #6B7280;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.flow-studio .flow-completion-chevron.open {
+  transform: rotate(180deg);
+}
+
+.flow-studio .flow-completion-dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  padding: 6px 0;
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  z-index: 20;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.flow-studio .flow-completion-dropdown-option {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  text-align: left;
+}
+
+.flow-studio .flow-completion-dropdown-option:hover {
+  background: #F3F4F6;
+}
+
+.flow-studio .flow-completion-dropdown-option.selected {
+  background: #EFF6FF;
+  color: #1D4ED8;
+}
+
+.flow-studio .flow-completion-add-rule {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: #E4590E;
+  cursor: pointer;
+}
+
+.flow-studio .flow-completion-add-rule:hover {
+  color: #C74913;
+  text-decoration: underline;
+}
+
+/* Additional Options accordion */
+.flow-studio .flow-additional-options {
+  padding: 0;
+}
+
+.flow-studio .flow-additional-option-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  gap: 12px;
+}
+
+.flow-studio .flow-additional-option-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4A4A4A;
+  cursor: pointer;
+  flex: 1;
+}
+
+.flow-studio .flow-toggle {
+  flex-shrink: 0;
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  border: none;
+  padding: 2px;
+  background: #BDBDBD;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.flow-studio .flow-toggle.on {
+  background: #2563EB;
+}
+
+.flow-studio .flow-toggle-knob {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease;
+}
+
+.flow-studio .flow-toggle.on .flow-toggle-knob {
+  transform: translateX(20px);
+}
+
+.flow-studio .flow-additional-options-divider {
+  border: none;
+  border-top: 1px solid #E5E7EB;
+  margin: 12px 0;
+}
+
+.flow-studio .flow-censor-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0 0;
+}
+
+.flow-studio .flow-censor-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.flow-studio .flow-censor-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4A4A4A;
+}
+
+.flow-studio .flow-censor-sublabel {
+  font-size: 13px;
+  color: #6B7280;
+}
+
+.flow-studio .flow-censor-select-btn {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #D35400;
+  background: #fff;
+  border: 1px solid #D35400;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.flow-studio .flow-censor-select-btn:hover {
+  background: #FFF5F0;
+  border-color: #C74913;
+  color: #C74913;
+}
+
+/* Design tab placeholder */
+.flow-design-placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.flow-design-item {
+  padding: 12px 14px;
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+}
+
+.flow-design-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.flow-design-desc {
+  display: block;
+  font-size: 12px;
+  color: #6B7280;
+  margin-top: 2px;
+}

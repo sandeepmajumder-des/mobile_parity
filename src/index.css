@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Primary - Whatfix Fire */
+  --primary-50: #FFF8F5;
+  --primary-200: #F58857;
+  --primary-400: #C74900;
+  --fire-orange: #F55800;
+  --fire-light: #FBA450;
+  --fire-dark: #C43F27;
+  
+  /* Secondary - Inkredible */
+  --secondary-0: #FCFCFD;
+  --secondary-50: #F6F6F9;
+  --secondary-100: #F2F2F8;
+  --secondary-200: #ECECF3;
+  --secondary-300: #DFDDE7;
+  --secondary-400: #8C899F;
+  --secondary-600: #6B697B;
+  --secondary-700: #525066;
+  --secondary-800: #3D3C52;
+  --secondary-900: #2B2B40;
+  --secondary-1000: #1F1F32;
+  
+  /* Intent - Info */
+  --info-300: #2E9EFA;
+  --info-400: #0975D7;
+  --info-500: #2775C4;
+  
+  /* Intent - Success */
+  --success-500: #198558;
+  
+  /* Primitives */
+  --white: #FFFFFF;
+  --black: #000000;
+  
+  /* Brand */
+  --crimson-600: #872345;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--white);
+  color: var(--secondary-900);
+  font-size: 14px;
+  line-height: 1.43;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input {
+  font-family: inherit;
+}
