@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronUp, ChevronDown, Eye, Settings, MapPin, Clock, Users, Info, Bluetooth, Plus, Trash2, Pencil, Droplet, Square, AlignCenter, ArrowUpDown, FileText, Globe, Route, Hash, Tag, Calendar, Monitor } from 'lucide-react'
+import PlatformsSelector from './PlatformsSelector'
 import './MobileStudio.css'
 
 // Where does the popup appear – Show on options (each can only be used in one condition)
@@ -748,13 +749,15 @@ function generateIdentifierName() {
 }
 
 function MobileStudio({ onClose, onSave, popupType = 'overlay' }) {
-  const [activeTab, setActiveTab] = useState('identify')
+  const [activeTab, setActiveTab] = useState('setup')
   const [selectedScreen, setSelectedScreen] = useState(null)
   const [connectSyncExpanded, setConnectSyncExpanded] = useState(true)
   const [pairDeviceExpanded, setPairDeviceExpanded] = useState(true)
   const [appScreensSubExpanded, setAppScreensSubExpanded] = useState(false)
   const [isDevicePaired, setIsDevicePaired] = useState(false)
   const [identifiersExpanded, setIdentifiersExpanded] = useState(false)
+  const [platformsExpanded, setPlatformsExpanded] = useState(false)
+  const [selectedPlatforms, setSelectedPlatforms] = useState([])
   const [appVersion, setAppVersion] = useState('')
   const [overlayTitle, setOverlayTitle] = useState('')
   const [snackbarMessage, setSnackbarMessage] = useState(null)
@@ -1163,7 +1166,7 @@ function MobileStudio({ onClose, onSave, popupType = 'overlay' }) {
       <div className="studio-panel">
         {/* Content */}
         <div className="studio-content">
-          {activeTab === 'identify' && (
+          {activeTab === 'setup' && (
             <>
               {/* Connect & Sync Accordion */}
               <div className="studio-accordion">
@@ -1287,7 +1290,7 @@ function MobileStudio({ onClose, onSave, popupType = 'overlay' }) {
                     }
                   }}
                 >
-                  <span className="accordion-title">Identifiers</span>
+                  <span className="accordion-title">Identify</span>
                   {identifiersExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </button>
                 
@@ -1370,6 +1373,21 @@ function MobileStudio({ onClose, onSave, popupType = 'overlay' }) {
                         </button>
                       )}
                     </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="studio-accordion">
+                <button
+                  className="accordion-header"
+                  onClick={() => setPlatformsExpanded(!platformsExpanded)}
+                >
+                  <span className="accordion-title">Platforms</span>
+                  {platformsExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                </button>
+                {platformsExpanded && (
+                  <div className="accordion-body">
+                    <PlatformsSelector selectedIds={selectedPlatforms} onChange={setSelectedPlatforms} />
                   </div>
                 )}
               </div>
@@ -2074,11 +2092,11 @@ function MobileStudio({ onClose, onSave, popupType = 'overlay' }) {
           {/* Tabs under the title */}
           <div className="studio-tabs">
             <button 
-              className={`studio-tab ${activeTab === 'identify' ? 'active' : ''}`}
-              onClick={() => setActiveTab('identify')}
+              className={`studio-tab ${activeTab === 'setup' ? 'active' : ''}`}
+              onClick={() => setActiveTab('setup')}
             >
-              <span>Identify</span>
-              {activeTab === 'identify' && <div className="tab-indicator"></div>}
+              <span>Setup</span>
+              {activeTab === 'setup' && <div className="tab-indicator"></div>}
             </button>
             <button 
               className={`studio-tab ${activeTab === 'design' ? 'active' : ''}`}

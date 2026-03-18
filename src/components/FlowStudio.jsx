@@ -5,6 +5,7 @@ import {
   MoreVertical, Flag, X,
 } from 'lucide-react'
 import { appScreens } from '../data/appScreens'
+import PlatformsSelector from './PlatformsSelector'
 import './MobileStudio.css'
 import './FlowStudio.css'
 
@@ -273,10 +274,12 @@ function FlowPhonePreview({ screen, selectingForStepId, hoveredElement, flowStep
 }
 
 function FlowStudio({ onClose, onSave }) {
-  const [activeTab, setActiveTab] = useState('identify')
+  const [activeTab, setActiveTab] = useState('setup')
   const [connectSyncExpanded, setConnectSyncExpanded] = useState(true)
   const [pairDeviceExpanded, setPairDeviceExpanded] = useState(true)
   const [appScreensSubExpanded, setAppScreensSubExpanded] = useState(false)
+  const [platformsExpanded, setPlatformsExpanded] = useState(false)
+  const [selectedPlatforms, setSelectedPlatforms] = useState([])
   const [isDevicePaired, setIsDevicePaired] = useState(false)
   const [selectedScreen, setSelectedScreen] = useState(appScreens[0]?.id ?? null)
   const [flowStepsExpanded, setFlowStepsExpanded] = useState(true)
@@ -495,7 +498,7 @@ function FlowStudio({ onClose, onSave }) {
 
       <div className="studio-panel">
         <div className="studio-content">
-          {activeTab === 'identify' && (
+          {activeTab === 'setup' && (
             <>
               <div className="studio-accordion">
                 <button className="accordion-header" onClick={() => setConnectSyncExpanded(!connectSyncExpanded)}>
@@ -670,6 +673,18 @@ function FlowStudio({ onClose, onSave }) {
                         </div>
                       )}
                     </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="studio-accordion">
+                <button className="accordion-header" onClick={() => setPlatformsExpanded(!platformsExpanded)}>
+                  <span className="accordion-title">Platforms</span>
+                  {platformsExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                </button>
+                {platformsExpanded && (
+                  <div className="accordion-body">
+                    <PlatformsSelector selectedIds={selectedPlatforms} onChange={setSelectedPlatforms} />
                   </div>
                 )}
               </div>
@@ -1147,9 +1162,9 @@ function FlowStudio({ onClose, onSave }) {
             <div className="header-right" />
           </div>
           <div className="studio-tabs">
-            <button className={`studio-tab ${activeTab === 'identify' ? 'active' : ''}`} onClick={() => setActiveTab('identify')}>
-              <span>Identify</span>
-              {activeTab === 'identify' && <div className="tab-indicator" />}
+            <button className={`studio-tab ${activeTab === 'setup' ? 'active' : ''}`} onClick={() => setActiveTab('setup')}>
+              <span>Setup</span>
+              {activeTab === 'setup' && <div className="tab-indicator" />}
             </button>
             <button className={`studio-tab ${activeTab === 'configuration' ? 'active' : ''}`} onClick={() => setActiveTab('configuration')}>
               <span>Configuration</span>
