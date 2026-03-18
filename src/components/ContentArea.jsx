@@ -8,10 +8,17 @@ import {
   ChevronUp
 } from 'lucide-react'
 import ContentTable from './ContentTable'
+import { initialContentData } from './ContentTable'
 import PopupTypeModal from './PopupTypeModal'
 import MobileStudio from './MobileStudio'
 import FlowStudio from './FlowStudio'
 import './ContentArea.css'
+
+function formatDate() {
+  const d = new Date()
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`
+}
 
 // Dropdown menu icons
 function DirectionsIcon() {
@@ -128,6 +135,8 @@ function ContentArea() {
   const [showMobileStudio, setShowMobileStudio] = useState(false)
   const [showFlowStudio, setShowFlowStudio] = useState(false)
   const [selectedPopupType, setSelectedPopupType] = useState(null)
+  const [contentItems, setContentItems] = useState(() => [...initialContentData])
+  const [activeContentTab, setActiveContentTab] = useState('published')
 
   const handleCreateClick = () => {
     setIsDropdownOpen(!isDropdownOpen)
@@ -157,22 +166,50 @@ function ContentArea() {
     setSelectedPopupType(null)
   }
 
+  const addDraftItem = (payload) => {
+    const { name, type } = payload
+    setContentItems(prev => [{
+      id: Date.now(),
+      name: name || (type === 'Flow' ? 'Untitled Flow' : 'Untitled Pop-up'),
+      type,
+      status: 'draft',
+      isFolder: false,
+      platform: null,
+      members: ['S', 'A', 'R'],
+      lastUpdated: formatDate(),
+      lastUpdatedBy: 'You'
+    }, ...prev])
+    setActiveContentTab('draft')
+  }
+
   // If Flow Studio is open, show flow creation journey
   if (showFlowStudio) {
     return (
-      <FlowStudio onClose={() => setShowFlowStudio(false)} />
+      <FlowStudio
+        onClose={() => setShowFlowStudio(false)}
+        onSave={addDraftItem}
+      />
     )
   }
 
   // If Mobile Studio is open, show popup creation journey
   if (showMobileStudio) {
     return (
-      <MobileStudio 
+      <MobileStudio
         onClose={handleCloseMobileStudio}
         popupType={selectedPopupType}
+        onSave={addDraftItem}
       />
     )
   }
+
+  const filteredItems =
+    activeContentTab === 'draft'
+      ? contentItems.filter(item => item.status === 'draft' || item.status === 'published')
+      : contentItems.filter(item => item.status === activeContentTab)
+
+  // Newest first: sort by id descending (new items use Date.now() as id, so higher = newer)
+  const sortedItems = [...filteredItems].sort((a, b) => (b.id ?? 0) - (a.id ?? 0))
 
   return (
     <main className="content-area">
@@ -213,15 +250,26 @@ function ContentArea() {
       <div className="content-controls">
         <div className="controls-left">
           <div className="tabs">
-            <button className="tab active">
+            <button
+              className={`tab ${activeContentTab === 'draft' ? 'active' : ''}`}
+              onClick={() => setActiveContentTab('draft')}
+            >
               <span className="tab-label">Draft</span>
-              <div className="tab-indicator" />
+              {activeContentTab === 'draft' && <div className="tab-indicator" />}
             </button>
-            <button className="tab">
-              <span className="tab-label">Published </span>
+            <button
+              className={`tab ${activeContentTab === 'published' ? 'active' : ''}`}
+              onClick={() => setActiveContentTab('published')}
+            >
+              <span className="tab-label">Ready</span>
+              {activeContentTab === 'published' && <div className="tab-indicator" />}
             </button>
-            <button className="tab">
-              <span className="tab-label">Unpublished</span>
+            <button
+              className={`tab ${activeContentTab === 'unpublished' ? 'active' : ''}`}
+              onClick={() => setActiveContentTab('unpublished')}
+            >
+              <span className="tab-label">Production</span>
+              {activeContentTab === 'unpublished' && <div className="tab-indicator" />}
             </button>
           </div>
         </div>
@@ -263,7 +311,7 @@ function ContentArea() {
 
       <div className="divider-horizontal" />
 
-      <ContentTable />
+      <ContentTable items={sortedItems} />
 
       <div className="pagination">
         <div className="pagination-info">

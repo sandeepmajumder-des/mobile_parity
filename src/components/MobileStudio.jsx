@@ -747,7 +747,7 @@ function generateIdentifierName() {
   return `${prefix}_${suffix}`
 }
 
-function MobileStudio({ onClose, popupType = 'overlay' }) {
+function MobileStudio({ onClose, onSave, popupType = 'overlay' }) {
   const [activeTab, setActiveTab] = useState('identify')
   const [selectedScreen, setSelectedScreen] = useState(null)
   const [connectSyncExpanded, setConnectSyncExpanded] = useState(true)
@@ -757,6 +757,7 @@ function MobileStudio({ onClose, popupType = 'overlay' }) {
   const [identifiersExpanded, setIdentifiersExpanded] = useState(false)
   const [appVersion, setAppVersion] = useState('')
   const [overlayTitle, setOverlayTitle] = useState('')
+  const [snackbarMessage, setSnackbarMessage] = useState(null)
   
   // Customizations tab accordions
   const [appearanceExpanded, setAppearanceExpanded] = useState(true)
@@ -868,6 +869,12 @@ function MobileStudio({ onClose, popupType = 'overlay' }) {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [openWhoDropdownId])
+
+  useEffect(() => {
+    if (!snackbarMessage) return
+    const t = setTimeout(() => setSnackbarMessage(null), 5000)
+    return () => clearTimeout(t)
+  }, [snackbarMessage])
   
   // Handle pair device click
   const handlePairDevice = () => {
@@ -2118,12 +2125,31 @@ function MobileStudio({ onClose, popupType = 'overlay' }) {
           <button className="btn-discard" onClick={onClose}>
             Discard changes
           </button>
-          <button className="btn-save">
+          <button
+            className="btn-save"
+            onClick={() => {
+              const name = overlayTitle.trim()
+              if (!name) {
+                setSnackbarMessage('Pop-up cannot be saved without a title')
+                return
+              }
+              if (typeof onSave === 'function') {
+                onSave({ name, type: 'Pop-up' })
+              }
+              onClose()
+            }}
+          >
             Save
           </button>
         </div>
       </div>
 
+      {snackbarMessage && (
+        <div className="flow-snackbar studio-snackbar" role="alert">
+          <span>{snackbarMessage}</span>
+          <button type="button" className="flow-snackbar-dismiss" aria-label="Dismiss" onClick={() => setSnackbarMessage(null)}>×</button>
+        </div>
+      )}
     </div>
   )
 }

@@ -647,6 +647,28 @@
   color: #111827;
 }
 
+.flow-studio .flow-studio-title-input,
+.flow-studio .studio-title-input.flow-studio-title-input {
+  flex: 1;
+  font-size: 18px;
+  font-weight: 600;
+  color: #6B7280;
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.flow-studio .flow-studio-title-input::placeholder {
+  color: #6B7280;
+}
+
+.flow-studio .flow-studio-title-input.has-value {
+  color: #111827;
+}
+
 .flow-studio .flow-select-hint {
   position: absolute;
   bottom: 0;
@@ -1403,4 +1425,48 @@
   font-size: 12px;
   color: #6B7280;
   margin-top: 2px;
+}
+
+/* Snackbar */
+.flow-studio .flow-snackbar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #111827;
+  color: #fff;
+  font-size: 14px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  z-index: 1000;
+  animation: flow-snackbar-in 0.25s ease;
+}
+
+@keyframes flow-snackbar-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.flow-studio .flow-snackbar-dismiss {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 20px;
+  line-height: 1;
+  padding: 0 0 0 8px;
+  cursor: pointer;
+}
+
+.flow-studio .flow-snackbar-dismiss:hover {
+  color: #fff;
 }

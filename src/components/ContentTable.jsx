@@ -124,6 +124,16 @@ const contentData = [
   },
 ]
 
+// Add status to items for Draft/Published/Unpublished filtering
+function withStatus(items, defaultStatus = 'published') {
+  return items.map(item => ({
+    ...item,
+    status: item.status ?? defaultStatus
+  }))
+}
+
+export const initialContentData = withStatus(contentData)
+
 function FolderIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -191,7 +201,8 @@ function SortAscIcon() {
   )
 }
 
-function ContentTable() {
+function ContentTable({ items }) {
+  const data = items != null ? items : contentData
   return (
     <div className="table-container">
       <table className="content-table">
@@ -221,7 +232,7 @@ function ContentTable() {
           </tr>
         </thead>
         <tbody>
-          {contentData.map((item) => (
+          {data.map((item) => (
             <tr key={item.id}>
               <td className="col-checkbox">
                 <div className="checkbox-wrapper">

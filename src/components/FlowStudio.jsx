@@ -272,7 +272,7 @@ function FlowPhonePreview({ screen, selectingForStepId, hoveredElement, flowStep
   )
 }
 
-function FlowStudio({ onClose }) {
+function FlowStudio({ onClose, onSave }) {
   const [activeTab, setActiveTab] = useState('identify')
   const [connectSyncExpanded, setConnectSyncExpanded] = useState(true)
   const [pairDeviceExpanded, setPairDeviceExpanded] = useState(true)
@@ -287,6 +287,8 @@ function FlowStudio({ onClose }) {
   const [activeStepId, setActiveStepId] = useState(null)
   const [selectingForStepId, setSelectingForStepId] = useState(null)
   const [hoveredElement, setHoveredElement] = useState(null)
+  const [flowName, setFlowName] = useState('')
+  const [snackbarMessage, setSnackbarMessage] = useState(null)
 
   // Visibility (same structure as popup)
   const [whereExpanded, setWhereExpanded] = useState(false)
@@ -392,6 +394,12 @@ function FlowStudio({ onClose }) {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [stepMenuOpenId])
+
+  useEffect(() => {
+    if (!snackbarMessage) return
+    const t = setTimeout(() => setSnackbarMessage(null), 5000)
+    return () => clearTimeout(t)
+  }, [snackbarMessage])
 
   const handlePairDevice = () => {
     setIsDevicePaired(true)
@@ -1124,11 +1132,18 @@ function FlowStudio({ onClose }) {
             <span className="breadcrumb-sep">/</span>
             <a href="#" onClick={(e) => { e.preventDefault(); onClose(); }} className="breadcrumb-link">Create content</a>
             <span className="breadcrumb-sep">/</span>
-            <span className="breadcrumb-text">Flow</span>
+            <span className="breadcrumb-text">{flowName.trim() || 'Untitled Flow'}</span>
           </div>
           <div className="header-main">
             <button className="back-button" onClick={onClose}><ChevronLeft size={20} /></button>
-            <span className="flow-studio-header-title">Flow</span>
+            <input
+              type="text"
+              className={`studio-title-input flow-studio-title-input ${flowName.trim() ? 'has-value' : ''}`}
+              placeholder="Untitled Flow"
+              value={flowName}
+              onChange={(e) => setFlowName(e.target.value)}
+              aria-label="Flow name"
+            />
             <div className="header-right" />
           </div>
           <div className="studio-tabs">
@@ -1153,11 +1168,32 @@ function FlowStudio({ onClose }) {
           <button type="button" className="btn-discard" onClick={onClose}>
             Discard changes
           </button>
-          <button type="button" className="btn-save">
+          <button
+            type="button"
+            className="btn-save"
+            onClick={() => {
+              const name = flowName.trim()
+              if (!name) {
+                setSnackbarMessage('Flow cannot be saved without a title')
+                return
+              }
+              if (typeof onSave === 'function') {
+                onSave({ name, type: 'Flow' })
+              }
+              onClose()
+            }}
+          >
             Save
           </button>
         </div>
       </div>
+
+      {snackbarMessage && (
+        <div className="flow-snackbar" role="alert">
+          <span>{snackbarMessage}</span>
+          <button type="button" className="flow-snackbar-dismiss" aria-label="Dismiss" onClick={() => setSnackbarMessage(null)}>×</button>
+        </div>
+      )}
     </div>
   )
 }
