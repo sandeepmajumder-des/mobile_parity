@@ -5,7 +5,6 @@ import {
   MoreVertical, Flag, X,
 } from 'lucide-react'
 import { appScreens } from '../data/appScreens'
-import PlatformsSelector from './PlatformsSelector'
 import './MobileStudio.css'
 import './FlowStudio.css'
 
@@ -27,6 +26,122 @@ const WHO_IDENTIFY_OPTIONS = [
   { value: 'enterprise-attributes', label: 'Enterprise Attributes', description: 'Identify the user by enterprise-level attributes' },
   { value: 'user-attributes', label: 'User Attributes', description: 'Identify the user by user-level attributes' },
 ]
+
+const FLOW_STUDIO_SNAPSHOT_V = 1
+
+/** Defaults for new flow + merge base for saved snapshots (V1 dashboard). */
+const FLOW_STUDIO_DEFAULTS = {
+  activeTab: 'configuration',
+  creationStage: 'details',
+  flowPanelView: 'timeline',
+  stepConfigId: null,
+  activeStepId: null,
+  isDevicePaired: false,
+  isPairing: false,
+  flowStepsExpanded: true,
+  flowSteps: [],
+  flowName: '',
+  flowDescription: '',
+  flowTags: '',
+  flowKeywords: '',
+  flowAppType: 'Android',
+  appVersion: '',
+  whereExpanded: false,
+  whenExpanded: false,
+  whoExpanded: false,
+  whereConditions: [{ id: 1, showOn: '' }],
+  whenStartConditions: [{ id: 1, cause: '' }],
+  whoConditions: [{ id: 1, identifyBy: '' }],
+  configAppearanceExpanded: false,
+  configPositionExpanded: false,
+  configStepCompletionExpanded: false,
+  configAdditionalOptionsExpanded: false,
+  flowWidgetType: 'tooltip',
+  tooltipColor: '#1E3A5F',
+  tooltipCloseColor: '#ffffff',
+  tooltipPosition: 'bottom-left',
+  completionMode: 'manual',
+  stepCompletionRules: [{ id: 1, value: 'on-click-of-selected-element' }],
+  optionalStep: false,
+  showAsSpotlight: false,
+}
+
+function getFlowResolvedInitial(editItem) {
+  const firstScreenId = appScreens[0]?.id ?? null
+  const base = { ...FLOW_STUDIO_DEFAULTS, selectedScreen: firstScreenId }
+  const snap = editItem?.creationSnapshot
+  if (snap?.kind === 'flow' && snap.v === FLOW_STUDIO_SNAPSHOT_V) {
+    return {
+      ...base,
+      ...snap,
+      flowSteps: Array.isArray(snap.flowSteps) ? snap.flowSteps : [],
+      whereConditions: snap.whereConditions?.length ? snap.whereConditions : base.whereConditions,
+      whenStartConditions: snap.whenStartConditions?.length ? snap.whenStartConditions : base.whenStartConditions,
+      whoConditions: snap.whoConditions?.length ? snap.whoConditions : base.whoConditions,
+      stepCompletionRules: snap.stepCompletionRules?.length ? snap.stepCompletionRules : base.stepCompletionRules,
+      selectedScreen: snap.selectedScreen ?? firstScreenId,
+    }
+  }
+  const fromTableFlow = Boolean(editItem && !editItem.isFolder && editItem.type === 'Flow')
+  if (fromTableFlow) {
+    return {
+      ...base,
+      flowName: (editItem.name && String(editItem.name).trim()) || '',
+      creationStage: 'builder',
+      isDevicePaired: true,
+    }
+  }
+  return base
+}
+
+const FLOW_WIDGET_OPTIONS = [
+  {
+    id: 'popups',
+    label: 'Popups',
+    description: 'Centered dialog over the app—great for confirmations and short messages.',
+    visual: 'popups',
+  },
+  {
+    id: 'bottom-sheet',
+    label: 'Bottom sheet',
+    description: 'Slides up from the bottom; ideal for actions, lists, and extra context.',
+    visual: 'bottom-sheet',
+  },
+  {
+    id: 'drawers',
+    label: 'Drawers',
+    description: 'Side panel that slides in—useful for navigation, filters, or settings.',
+    visual: 'drawers',
+  },
+  {
+    id: 'tooltip',
+    label: 'Tooltip',
+    description: 'Compact callout anchored to an element with optional steps.',
+    visual: 'tooltip',
+  },
+  {
+    id: 'beacon',
+    label: 'Beacon',
+    description: 'Pulsing hotspot that draws attention without blocking the UI.',
+    visual: 'beacon',
+  },
+]
+
+function CaptureIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path d="M4 8V6C4 4.89543 4.89543 4 6 4H8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M12 4H14C15.1046 4 16 4.89543 16 6V8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M16 12V14C16 15.1046 15.1046 16 14 16H12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M8 16H6C4.89543 16 4 15.1046 4 14V12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="10" cy="10" r="2" stroke="currentColor" strokeWidth="1.5"/>
+    </svg>
+  )
+}
+
+function FlowWidgetChooserVisual({ variant }) {
+  return <span className={`flow-widget-chooser-thumb flow-widget-chooser-thumb--${variant}`} aria-hidden />
+}
 
 // Tooltip shown on the app screen for a step (label, description, Back/Next)
 // Optional: backgroundColor, closeColor (theme from Configuration), stepIndicator ("2/5"), showClose (for preview)
@@ -75,6 +190,8 @@ function FlowPhonePreview({ screen, selectingForStepId, hoveredElement, flowStep
     Boolean(activeStepId && flowSteps.some(s => s.screenId === screen.id && s.elementId === elementId && s.id === activeStepId))
 
   const getStepInfo = (elementId) => {
+    // While adding or reselecting a step, hide latched step tooltips so the screen is free to tap.
+    if (selectingForStepId) return null
     const step = flowSteps.find(s => s.screenId === screen.id && s.elementId === elementId)
     if (!step || activeStepId == null || step.id !== activeStepId) return null
     const stepIndex = flowSteps.findIndex(s => s.id === step.id)
@@ -273,57 +390,68 @@ function FlowPhonePreview({ screen, selectingForStepId, hoveredElement, flowStep
   )
 }
 
-function FlowStudio({ onClose, onSave }) {
-  const [activeTab, setActiveTab] = useState('setup')
-  const [connectSyncExpanded, setConnectSyncExpanded] = useState(true)
-  const [pairDeviceExpanded, setPairDeviceExpanded] = useState(true)
-  const [appScreensSubExpanded, setAppScreensSubExpanded] = useState(false)
-  const [platformsExpanded, setPlatformsExpanded] = useState(false)
-  const [selectedPlatforms, setSelectedPlatforms] = useState([])
-  const [isDevicePaired, setIsDevicePaired] = useState(false)
-  const [selectedScreen, setSelectedScreen] = useState(appScreens[0]?.id ?? null)
-  const [flowStepsExpanded, setFlowStepsExpanded] = useState(true)
-  const [flowSteps, setFlowSteps] = useState([])
+function FlowStudio({ onClose, onSave, editItem = null }) {
+  const flowInit = getFlowResolvedInitial(editItem)
+  const [activeTab, setActiveTab] = useState(flowInit.activeTab)
+  const [creationStage, setCreationStage] = useState(flowInit.creationStage)
+  /** V2-style: timeline first; Configuration/Visibility only after clicking a step */
+  const [flowPanelView, setFlowPanelView] = useState(flowInit.flowPanelView)
+  const [stepConfigId, setStepConfigId] = useState(flowInit.stepConfigId)
+  const [isDevicePaired, setIsDevicePaired] = useState(flowInit.isDevicePaired)
+  const [isPairing, setIsPairing] = useState(flowInit.isPairing)
+  const [selectedScreen, setSelectedScreen] = useState(flowInit.selectedScreen)
+  const [flowStepsExpanded, setFlowStepsExpanded] = useState(flowInit.flowStepsExpanded)
+  const [flowSteps, setFlowSteps] = useState(flowInit.flowSteps)
   const [stepMenuOpenId, setStepMenuOpenId] = useState(null)
   const [editingStepId, setEditingStepId] = useState(null)
   const [editDraft, setEditDraft] = useState({ actionLabel: '', actionTarget: '', description: '' })
-  const [activeStepId, setActiveStepId] = useState(null)
+  const [activeStepId, setActiveStepId] = useState(flowInit.activeStepId)
   const [selectingForStepId, setSelectingForStepId] = useState(null)
   const [hoveredElement, setHoveredElement] = useState(null)
-  const [flowName, setFlowName] = useState('')
+  const [flowName, setFlowName] = useState(flowInit.flowName)
+  const [flowDescription, setFlowDescription] = useState(flowInit.flowDescription)
+  const [flowTags, setFlowTags] = useState(flowInit.flowTags)
+  const [flowKeywords, setFlowKeywords] = useState(flowInit.flowKeywords)
+  /** Set from paired application (demo: Android) */
+  const [flowAppType, setFlowAppType] = useState(flowInit.flowAppType)
+  const [showFlowDetailsPanel, setShowFlowDetailsPanel] = useState(false)
+  const [appVersion, setAppVersion] = useState(flowInit.appVersion)
   const [snackbarMessage, setSnackbarMessage] = useState(null)
 
   // Visibility (same structure as popup)
-  const [whereExpanded, setWhereExpanded] = useState(false)
-  const [whenExpanded, setWhenExpanded] = useState(false)
-  const [whoExpanded, setWhoExpanded] = useState(false)
-  const [whereConditions, setWhereConditions] = useState([{ id: 1, showOn: '' }])
-  const [whenStartConditions, setWhenStartConditions] = useState([{ id: 1, cause: '' }])
-  const [whoConditions, setWhoConditions] = useState([{ id: 1, identifyBy: '' }])
+  const [whereExpanded, setWhereExpanded] = useState(flowInit.whereExpanded)
+  const [whenExpanded, setWhenExpanded] = useState(flowInit.whenExpanded)
+  const [whoExpanded, setWhoExpanded] = useState(flowInit.whoExpanded)
+  const [whereConditions, setWhereConditions] = useState(flowInit.whereConditions)
+  const [whenStartConditions, setWhenStartConditions] = useState(flowInit.whenStartConditions)
+  const [whoConditions, setWhoConditions] = useState(flowInit.whoConditions)
   const [openWhereDropdownId, setOpenWhereDropdownId] = useState(null)
   const [openWhenDropdownId, setOpenWhenDropdownId] = useState(null)
   const [openWhoDropdownId, setOpenWhoDropdownId] = useState(null)
 
   // Configuration tab accordions
-  const [configAppearanceExpanded, setConfigAppearanceExpanded] = useState(false)
-  const [configPositionExpanded, setConfigPositionExpanded] = useState(false)
-  const [configStepCompletionExpanded, setConfigStepCompletionExpanded] = useState(false)
-  const [configAdditionalOptionsExpanded, setConfigAdditionalOptionsExpanded] = useState(false)
+  const [configAppearanceExpanded, setConfigAppearanceExpanded] = useState(flowInit.configAppearanceExpanded)
+  const [configPositionExpanded, setConfigPositionExpanded] = useState(flowInit.configPositionExpanded)
+  const [configStepCompletionExpanded, setConfigStepCompletionExpanded] = useState(flowInit.configStepCompletionExpanded)
+  const [configAdditionalOptionsExpanded, setConfigAdditionalOptionsExpanded] = useState(
+    flowInit.configAdditionalOptionsExpanded
+  )
 
   // Tooltip appearance (used by step tooltip and by Appearance preview)
-  const [tooltipTheme, setTooltipTheme] = useState('modern')
-  const [tooltipColor, setTooltipColor] = useState('#1E3A5F')
-  const [tooltipCloseColor, setTooltipCloseColor] = useState('#ffffff')
+  const [flowWidgetType, setFlowWidgetType] = useState(flowInit.flowWidgetType)
+  const [flowWidgetPickerOpen, setFlowWidgetPickerOpen] = useState(false)
+  const [tooltipColor, setTooltipColor] = useState(flowInit.tooltipColor)
+  const [tooltipCloseColor, setTooltipCloseColor] = useState(flowInit.tooltipCloseColor)
 
   // Tooltip position: which of the 12 positions is selected (beak points toward center)
-  const [tooltipPosition, setTooltipPosition] = useState('bottom-left')
+  const [tooltipPosition, setTooltipPosition] = useState(flowInit.tooltipPosition)
   // Step completion rules: manual | automated, and list of rules (dropdown values)
-  const [completionMode, setCompletionMode] = useState('manual')
-  const [stepCompletionRules, setStepCompletionRules] = useState([{ id: 1, value: 'on-click-of-selected-element' }])
+  const [completionMode, setCompletionMode] = useState(flowInit.completionMode)
+  const [stepCompletionRules, setStepCompletionRules] = useState(flowInit.stepCompletionRules)
   const [openCompletionDropdownId, setOpenCompletionDropdownId] = useState(null)
   // Additional options: toggles and censor
-  const [optionalStep, setOptionalStep] = useState(false)
-  const [showAsSpotlight, setShowAsSpotlight] = useState(false)
+  const [optionalStep, setOptionalStep] = useState(flowInit.optionalStep)
+  const [showAsSpotlight, setShowAsSpotlight] = useState(flowInit.showAsSpotlight)
   const STEP_COMPLETION_RULE_OPTIONS = [
     { value: 'on-click-of-selected-element', label: 'On click of selected element' },
     { value: 'on-element-visible', label: 'On element visible' },
@@ -351,6 +479,20 @@ function FlowStudio({ onClose, onSave }) {
   useEffect(() => {
     if (!selectedScreen && appScreens.length > 0) setSelectedScreen(appScreens[0].id)
   }, [])
+
+  useEffect(() => {
+    if (
+      creationStage !== 'builder' ||
+      flowPanelView !== 'step-editor' ||
+      stepConfigId == null ||
+      flowSteps.some((s) => s.id === stepConfigId)
+    ) {
+      return
+    }
+    setFlowPanelView('timeline')
+    setStepConfigId(null)
+    setActiveStepId(null)
+  }, [creationStage, flowPanelView, stepConfigId, flowSteps])
 
 
   useEffect(() => {
@@ -404,9 +546,15 @@ function FlowStudio({ onClose, onSave }) {
     return () => clearTimeout(t)
   }, [snackbarMessage])
 
+  // Handle pair device click with 2 second loader
   const handlePairDevice = () => {
-    setIsDevicePaired(true)
-    setSelectedScreen(appScreens[0]?.id ?? null)
+    setIsPairing(true)
+    setTimeout(() => {
+      setIsPairing(false)
+      setIsDevicePaired(true)
+      setSelectedScreen(appScreens[0]?.id ?? null)
+      setFlowAppType('Android')
+    }, 2000)
   }
 
   const handleStartSelectElement = (stepId) => {
@@ -439,10 +587,53 @@ function FlowStudio({ onClose, onSave }) {
     }
     setSelectingForStepId(null)
     setHoveredElement(null)
+    setFlowPanelView('timeline')
+    setStepConfigId(null)
   }
 
   const handleAddStep = () => {
+    setShowFlowDetailsPanel(false)
+    setCreationStage('builder')
+    setFlowPanelView('timeline')
+    setStepConfigId(null)
+    if (!isDevicePaired) {
+      setIsPairing(false)
+      setIsDevicePaired(true)
+      setSelectedScreen((prev) => prev ?? (appScreens[0]?.id ?? null))
+      setFlowAppType('Android')
+    }
+  }
+
+  const handleTimelineAddStep = () => {
+    if (!isDevicePaired) {
+      setIsPairing(false)
+      setIsDevicePaired(true)
+      setSelectedScreen((prev) => prev ?? (appScreens[0]?.id ?? null))
+      setFlowAppType('Android')
+    }
     setSelectingForStepId('new')
+  }
+
+  const openStepConfiguration = (stepId) => {
+    setShowFlowDetailsPanel(false)
+    setStepConfigId(stepId)
+    setActiveStepId(stepId)
+    setFlowPanelView('step-editor')
+    setStepMenuOpenId(null)
+  }
+
+  const closeStepConfiguration = () => {
+    setFlowPanelView('timeline')
+    setStepConfigId(null)
+    setActiveStepId(null)
+  }
+
+  const handleRemoveFlowStep = (id) => {
+    setFlowSteps((prev) => prev.filter((s) => s.id !== id))
+    setStepMenuOpenId(null)
+    if (stepConfigId === id) {
+      closeStepConfiguration()
+    }
   }
 
   const handleStartEditStep = (step) => {
@@ -461,6 +652,84 @@ function FlowStudio({ onClose, onSave }) {
     setEditingStepId(null)
   }
 
+  useEffect(() => {
+    if (!flowWidgetPickerOpen) return undefined
+    const onKey = (e) => {
+      if (e.key === 'Escape') setFlowWidgetPickerOpen(false)
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [flowWidgetPickerOpen])
+
+  const closeFlowDetailsPanel = () => setShowFlowDetailsPanel(false)
+
+  const renderFlowDetailsForm = (idSuffix) => (
+    <div className="flow-step-edit-form">
+      <div className="flow-step-edit-row">
+        <label htmlFor={`flow-description${idSuffix}`}>Flow description (optional)</label>
+        <textarea
+          id={`flow-description${idSuffix}`}
+          rows={3}
+          className="flow-step-edit-input"
+          value={flowDescription}
+          onChange={(e) => setFlowDescription(e.target.value)}
+        />
+      </div>
+      <div className="flow-step-edit-row">
+        <label htmlFor={`flow-tags${idSuffix}`}>Tags (optional)</label>
+        <input
+          id={`flow-tags${idSuffix}`}
+          type="text"
+          className="flow-step-edit-input"
+          value={flowTags}
+          onChange={(e) => setFlowTags(e.target.value)}
+        />
+      </div>
+      <div className="flow-step-edit-row">
+        <label htmlFor={`flow-keywords${idSuffix}`}>Keywords (optional)</label>
+        <input
+          id={`flow-keywords${idSuffix}`}
+          type="text"
+          className="flow-step-edit-input"
+          value={flowKeywords}
+          onChange={(e) => setFlowKeywords(e.target.value)}
+        />
+      </div>
+      <div className="flow-step-edit-row flow-step-edit-row--apptype">
+        <label htmlFor={`flow-apptype${idSuffix}`}>App type</label>
+        <input
+          id={`flow-apptype${idSuffix}`}
+          type="text"
+          className="flow-step-edit-input flow-step-apptype-input"
+          value={flowAppType}
+          disabled
+          readOnly
+          aria-label="App type"
+        />
+        <p className="flow-apptype-hint">
+          Automatically set from application while pairing.
+        </p>
+      </div>
+    </div>
+  )
+
+  const renderFlowDetailsL2 = (idSuffix) => (
+    <>
+      <div className="flow-step-config-toolbar flow-details-l2-toolbar">
+        <button
+          type="button"
+          className="back-button"
+          onClick={closeFlowDetailsPanel}
+          aria-label="Back to flow"
+        >
+          <ChevronLeft size={20} />
+        </button>
+        <span className="flow-step-config-toolbar-title">Flow details</span>
+      </div>
+      {renderFlowDetailsForm(idSuffix)}
+    </>
+  )
+
   return (
     <div className="mobile-studio flow-studio">
       <div className="studio-preview-area">
@@ -474,17 +743,46 @@ function FlowStudio({ onClose, onSave }) {
               </div>
             </div>
             <div className={`phone-content ${isDevicePaired ? 'device-paired' : ''}`}>
-              <FlowPhonePreview
-                screen={currentScreen}
-                selectingForStepId={selectingForStepId}
-                hoveredElement={hoveredElement}
-                flowSteps={flowSteps}
-                activeStepId={activeStepId}
-                onElementSelect={handleElementSelect}
-                onElementHover={setHoveredElement}
-                tooltipColor={tooltipColor}
-                tooltipCloseColor={tooltipCloseColor}
-              />
+              {isPairing ? (
+                // Loading state while pairing
+                <div className="phone-pairing-loader">
+                  <div className="pairing-spinner"></div>
+                  <p className="pairing-text">Pairing with your device...</p>
+                </div>
+              ) : isDevicePaired ? (
+                <FlowPhonePreview
+                  screen={currentScreen}
+                  selectingForStepId={selectingForStepId}
+                  hoveredElement={hoveredElement}
+                  flowSteps={flowSteps}
+                  activeStepId={activeStepId}
+                  onElementSelect={handleElementSelect}
+                  onElementHover={setHoveredElement}
+                  tooltipColor={tooltipColor}
+                  tooltipCloseColor={tooltipCloseColor}
+                />
+              ) : (
+                // Pairing UI on phone screen when not paired
+                <div className="phone-pair-screen">
+                  <div className="pair-illustration-phone">
+                    <div className="pair-phone-icon-container">
+                      <div className="pair-phone-back"></div>
+                      <div className="pair-phone-front"></div>
+                      <div className="pair-phone-bluetooth">
+                        <Bluetooth size={20} strokeWidth={2} />
+                      </div>
+                    </div>
+                  </div>
+                  <p className="pair-phone-text">Pair your mobile app to create content</p>
+                  <button 
+                    className="pair-phone-cta"
+                    onClick={handlePairDevice}
+                  >
+                    <Bluetooth size={16} />
+                    <span>Pair device</span>
+                  </button>
+                </div>
+              )}
             </div>
             {selectingForStepId && (
               <div className="flow-select-hint">
@@ -498,200 +796,164 @@ function FlowStudio({ onClose, onSave }) {
 
       <div className="studio-panel">
         <div className="studio-content">
-          {activeTab === 'setup' && (
-            <>
-              <div className="studio-accordion">
-                <button className="accordion-header" onClick={() => setConnectSyncExpanded(!connectSyncExpanded)}>
-                  <span className="accordion-title">Connect & Sync</span>
-                  {connectSyncExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                </button>
-                {connectSyncExpanded && (
-                  <div className="accordion-body">
-                    <div className="sub-accordion">
-                      <button className="sub-accordion-header" onClick={() => setPairDeviceExpanded(!pairDeviceExpanded)}>
-                        <div className="sub-accordion-title-row">
-                          <Bluetooth size={16} className="sub-accordion-icon" />
-                          <span className="sub-accordion-title">Pair device</span>
-                        </div>
-                        {pairDeviceExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                      </button>
-                      {pairDeviceExpanded && (
-                        <div className="sub-accordion-body">
-                          <div className="sub-accordion-content-wrapper">
-                            <button className="pair-device-cta" onClick={handlePairDevice} disabled={isDevicePaired}>
-                              <Bluetooth size={20} />
-                              <span>{isDevicePaired ? 'Device Paired' : 'Pair device'}</span>
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    <div className="sub-accordion">
-                      <button className="sub-accordion-header" onClick={() => setAppScreensSubExpanded(!appScreensSubExpanded)}>
-                        <div className="sub-accordion-title-row">
-                          <Eye size={16} className="sub-accordion-icon" />
-                          <span className="sub-accordion-title">App screens</span>
-                        </div>
-                        {appScreensSubExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                      </button>
-                      {appScreensSubExpanded && (
-                        <div className="sub-accordion-body">
-                          <div className="sub-accordion-content-wrapper">
-                            <div className="screens-grid">
-                              {appScreens.map((screen) => (
-                                <div
-                                  key={screen.id}
-                                  className={`screen-card ${selectedScreen === screen.id ? 'selected' : ''}`}
-                                  onClick={() => setSelectedScreen(screen.id)}
-                                >
-                                  <div className="screen-preview">
-                                    <div className="mini-preview">
-                                      <div className="mini-header" style={{ background: screen.accentColor }}></div>
-                                      <div className="mini-body">
-                                        <div className="mini-search-bar"></div>
-                                        <div className="mini-categories">
-                                          <div className="mini-cat-item">🍕</div>
-                                          <div className="mini-cat-item">🍔</div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="screen-info">
-                                    <span className="screen-name">{screen.name}</span>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
+          {creationStage === 'details' ? (
+            <div className="popup-config-body flow-studio-config-body">
+              {showFlowDetailsPanel ? (
+                renderFlowDetailsL2('')
+              ) : (
+                <>
+                  <div className="flow-name-section">
+                    <button
+                      type="button"
+                      className="flow-details-btn"
+                      onClick={() => setShowFlowDetailsPanel(true)}
+                    >
+                      Details
+                    </button>
                   </div>
-                )}
-              </div>
 
-              <div className="studio-accordion">
-                <button className="accordion-header" onClick={() => setFlowStepsExpanded(!flowStepsExpanded)}>
-                  <span className="accordion-title">Flow steps</span>
-                  {flowStepsExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                </button>
-                {flowStepsExpanded && (
-                  <div className="accordion-body flow-steps-accordion-body">
-                    <div className="flow-steps-sequence-v2">
-                      {flowSteps.length > 0 && flowSteps.map((step, idx) => (
-                        <div
-                          key={step.id}
-                          className={`flow-step-card-v2 ${activeStepId === step.id ? 'flow-step-card-active' : ''}`}
-                          onClick={(e) => {
-                            if (e.target.closest('.flow-step-menu-wrap')) return
-                            if (editingStepId === step.id) return
-                            setActiveStepId(step.id)
-                            if (step.screenId) setSelectedScreen(step.screenId)
-                          }}
-                          role="button"
-                          tabIndex={0}
-                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveStepId(step.id); if (step.screenId) setSelectedScreen(step.screenId); } }}
-                        >
-                          <div className="flow-step-number-circle-v2">{idx + 1}</div>
-                          <div className="flow-step-content-v2">
-                            {editingStepId === step.id ? (
-                              <div className="flow-step-edit-form">
-                                <div className="flow-step-edit-row">
-                                  <label>Action</label>
-                                  <input
-                                    type="text"
-                                    value={editDraft.actionLabel}
-                                    onChange={(e) => setEditDraft(d => ({ ...d, actionLabel: e.target.value }))}
-                                    placeholder="e.g. Click"
-                                    className="flow-step-edit-input"
-                                  />
-                                </div>
-                                <div className="flow-step-edit-row">
-                                  <label>Target</label>
-                                  <input
-                                    type="text"
-                                    value={editDraft.actionTarget}
-                                    onChange={(e) => setEditDraft(d => ({ ...d, actionTarget: e.target.value }))}
-                                    placeholder="e.g. Save"
-                                    className="flow-step-edit-input"
-                                  />
-                                </div>
-                                <div className="flow-step-edit-row">
-                                  <label>Description</label>
-                                  <input
-                                    type="text"
-                                    value={editDraft.description}
-                                    onChange={(e) => setEditDraft(d => ({ ...d, description: e.target.value }))}
-                                    placeholder="Step description"
-                                    className="flow-step-edit-input"
-                                  />
-                                </div>
-                                <div className="flow-step-edit-actions">
-                                  <button type="button" className="flow-step-edit-cancel" onClick={handleCancelEditStep}>Cancel</button>
-                                  <button type="button" className="flow-step-edit-done" onClick={handleSaveEditStep}>Done</button>
-                                </div>
-                              </div>
-                            ) : (
-                              <>
-                                <p className="flow-step-action-v2">
-                                  {step.actionLabel} <strong>{step.actionTarget}</strong>
-                                </p>
-                                <p className="flow-step-desc-v2" title={step.description}>{step.description}</p>
-                                <div className="flow-step-menu-wrap">
-                                  <button
-                                    type="button"
-                                    className="flow-step-menu-btn"
-                                    onClick={(e) => { e.stopPropagation(); setStepMenuOpenId(stepMenuOpenId === step.id ? null : step.id); }}
-                                    aria-label="Step options"
-                                  >
-                                    <MoreVertical size={18} />
-                                  </button>
-                                  {stepMenuOpenId === step.id && (
-                                    <div className="flow-step-menu-dropdown">
-                                      <button type="button" onClick={(e) => { e.stopPropagation(); handleStartEditStep(step); }}>Edit</button>
-                                      <button type="button" className="flow-step-menu-delete" onClick={(e) => { e.stopPropagation(); setFlowSteps(flowSteps.filter(s => s.id !== step.id)); setStepMenuOpenId(null); }}>Delete</button>
-                                    </div>
-                                  )}
-                                </div>
-                              </>
-                            )}
-                          </div>
+                  <div className="flow-add-step-row-wrapper">
+                    <button type="button" className="flow-add-step-block" onClick={handleAddStep}>
+                      <Plus size={16} />
+                      Add flow steps
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          ) : (
+            <>
+              {flowPanelView === 'timeline' ? (
+                <div className="popup-config-body flow-studio-config-body flow-studio-timeline-body">
+                  {showFlowDetailsPanel ? (
+                    renderFlowDetailsL2('-tl')
+                  ) : (
+                    <>
+                  <button
+                    type="button"
+                    className="flow-details-btn"
+                    onClick={() => setShowFlowDetailsPanel(true)}
+                  >
+                    Details
+                  </button>
+
+                  <h3 className="flow-steps-count-header">
+                    {flowSteps.length === 1 ? '1 Step' : `${flowSteps.length} Steps`}
+                  </h3>
+                  <div className="flow-steps-sequence">
+                    {flowSteps.map((step, index) => (
+                      <div
+                        key={step.id}
+                        className={`flow-step-card ${activeStepId === step.id ? 'active' : ''}`}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => openStepConfiguration(step.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            openStepConfiguration(step.id)
+                          }
+                        }}
+                      >
+                        <span className="flow-step-number-circle">{index + 1}</span>
+                        <div className="flow-step-body">
+                          <span className="flow-step-card-label">
+                            {step.actionTarget || step.elementName || `Step ${index + 1}`}
+                          </span>
                         </div>
-                      ))}
-                      <div className="flow-add-step-row-v2">
-                        <button type="button" className="flow-add-step-btn-v2" onClick={() => setSelectingForStepId('new')}>
-                          <Plus size={20} />
-                          Add Step
+                        <div
+                          className="flow-step-menu-wrap"
+                          onClick={(e) => e.stopPropagation()}
+                          onKeyDown={(e) => e.stopPropagation()}
+                        >
+                          <button
+                            type="button"
+                            className="flow-step-menu-btn"
+                            aria-label="Step options"
+                            onClick={() => setStepMenuOpenId(stepMenuOpenId === step.id ? null : step.id)}
+                          >
+                            <MoreVertical size={18} />
+                          </button>
+                          {stepMenuOpenId === step.id && (
+                            <div className="flow-step-menu-dropdown">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  handleStartSelectElement(step.id)
+                                  setStepMenuOpenId(null)
+                                }}
+                              >
+                                Change element
+                              </button>
+                              <button
+                                type="button"
+                                className="flow-step-menu-delete"
+                                onClick={() => handleRemoveFlowStep(step.id)}
+                              >
+                                Remove step
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    <div className="flow-add-step-row-wrapper">
+                      <button type="button" className="flow-add-step-block" onClick={handleTimelineAddStep}>
+                        <Plus size={16} />
+                        Add Step
+                      </button>
+                    </div>
+                    <div className="flow-end-message-card">
+                      <span className="flow-step-number-circle flow-end-icon-wrap" aria-hidden>
+                        <Flag size={14} />
+                      </span>
+                      <span className="flow-step-card-label">End Message</span>
+                      <div className="flow-step-menu-wrap">
+                        <button type="button" className="flow-step-menu-btn" aria-label="End message options">
+                          <MoreVertical size={18} />
                         </button>
                       </div>
-                      {flowSteps.length > 0 && (
-                        <div className="flow-end-message-card-v2">
-                          <div className="flow-step-number-circle-v2 flow-end-flag-wrap">
-                            <Flag size={14} />
-                          </div>
-                          <span className="flow-end-message-label">End Message</span>
-                        </div>
-                      )}
                     </div>
                   </div>
-                )}
-              </div>
-
-              <div className="studio-accordion">
-                <button className="accordion-header" onClick={() => setPlatformsExpanded(!platformsExpanded)}>
-                  <span className="accordion-title">Platforms</span>
-                  {platformsExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                </button>
-                {platformsExpanded && (
-                  <div className="accordion-body">
-                    <PlatformsSelector selectedIds={selectedPlatforms} onChange={setSelectedPlatforms} />
+                    </>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <div className="flow-step-config-toolbar">
+                    <button
+                      type="button"
+                      className="back-button"
+                      onClick={closeStepConfiguration}
+                      aria-label="Back to flow steps"
+                    >
+                      <ChevronLeft size={20} />
+                    </button>
+                    <span className="flow-step-config-toolbar-title">
+                      {flowSteps.find((s) => s.id === stepConfigId)?.actionTarget ||
+                        flowSteps.find((s) => s.id === stepConfigId)?.elementName ||
+                        'Step'}
+                    </span>
                   </div>
-                )}
-              </div>
-            </>
-          )}
+                  <div className="panel-tabs">
+                    <button
+                      type="button"
+                      className={`panel-tab ${activeTab === 'configuration' ? 'active' : ''}`}
+                      onClick={() => setActiveTab('configuration')}
+                    >
+                      Configuration
+                    </button>
+                    <button
+                      type="button"
+                      className={`panel-tab ${activeTab === 'visibility rules' ? 'active' : ''}`}
+                      onClick={() => setActiveTab('visibility rules')}
+                    >
+                      Visibility Rules
+                    </button>
+                  </div>
 
           {activeTab === 'configuration' && (
+            <div className="popup-config-body flow-studio-config-body">
             <div className="flow-config-accordions">
               <div className="studio-accordion flow-config-accordion-item">
                 <button className="accordion-header" onClick={() => setConfigAppearanceExpanded(!configAppearanceExpanded)}>
@@ -700,32 +962,79 @@ function FlowStudio({ onClose, onSave }) {
                 </button>
                 {configAppearanceExpanded && (
                   <div className="accordion-body">
-                    <div className="flow-appearance-tooltip-section">
-                      <h4 className="flow-appearance-subheading">Tooltip</h4>
-                      <div className="flow-appearance-preview-box">
-                        <FlowStepTooltip
-                          step={{ actionLabel: 'Description part of the tip', actionTarget: '', description: 'Optional note section' }}
-                          stepIndex={0}
-                          totalSteps={5}
-                          stepIndicator="2/5"
-                          showClose
-                          backgroundColor={tooltipColor}
-                          closeColor={tooltipCloseColor}
-                        />
+                    {flowWidgetPickerOpen ? (
+                      <div className="flow-widget-chooser" role="dialog" aria-modal="true" aria-labelledby="flow-widget-chooser-title">
+                        <div className="flow-widget-chooser-header">
+                          <button
+                            type="button"
+                            className="flow-widget-chooser-back"
+                            aria-label="Back"
+                            onClick={() => setFlowWidgetPickerOpen(false)}
+                          >
+                            <ChevronLeft size={22} strokeWidth={2.25} />
+                          </button>
+                          <h2 id="flow-widget-chooser-title" className="flow-widget-chooser-title">
+                            Choose widget
+                          </h2>
+                        </div>
+                        <ul className="flow-widget-chooser-list">
+                          {FLOW_WIDGET_OPTIONS.map((opt) => (
+                            <li key={opt.id}>
+                              <button
+                                type="button"
+                                className={`flow-widget-chooser-card ${flowWidgetType === opt.id ? 'flow-widget-chooser-card--selected' : ''}`}
+                                onClick={() => {
+                                  setFlowWidgetType(opt.id)
+                                  setFlowWidgetPickerOpen(false)
+                                }}
+                              >
+                                <div className="flow-widget-chooser-thumb-wrap">
+                                  <FlowWidgetChooserVisual variant={opt.visual} />
+                                </div>
+                                <div className="flow-widget-chooser-copy">
+                                  <span className="flow-widget-chooser-name">{opt.label}</span>
+                                  <span className="flow-widget-chooser-desc">{opt.description}</span>
+                                </div>
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                      <div className="flow-appearance-theme-row">
-                        <span className="flow-appearance-theme-name">{tooltipTheme === 'modern' ? 'Modern' : tooltipTheme}</span>
-                        <button type="button" className="flow-appearance-change-link" onClick={() => setTooltipTheme(tooltipTheme === 'modern' ? 'classic' : 'modern')}>Change</button>
+                    ) : (
+                      <div className="flow-appearance-tooltip-section">
+                        <div className="flow-appearance-tooltip-header">
+                          <span className="flow-appearance-tooltip-label">
+                            {FLOW_WIDGET_OPTIONS.find((o) => o.id === flowWidgetType)?.label ?? 'Tooltip'}
+                          </span>
+                          <button
+                            type="button"
+                            className="flow-appearance-change-widget"
+                            onClick={() => setFlowWidgetPickerOpen(true)}
+                          >
+                            Change widget
+                          </button>
+                        </div>
+                        <div className="flow-appearance-preview-box">
+                          <FlowStepTooltip
+                            step={{ actionLabel: 'Description part of the tip', actionTarget: '', description: 'Optional note section' }}
+                            stepIndex={0}
+                            totalSteps={5}
+                            stepIndicator="2/5"
+                            showClose
+                            backgroundColor={tooltipColor}
+                            closeColor={tooltipCloseColor}
+                          />
+                        </div>
+                        <div className="flow-appearance-color-row">
+                          <label className="flow-appearance-color-label">Color</label>
+                          <input type="color" value={tooltipColor} onChange={(e) => setTooltipColor(e.target.value)} className="flow-appearance-color-input" aria-label="Tooltip color" />
+                        </div>
+                        <div className="flow-appearance-color-row">
+                          <label className="flow-appearance-color-label">Close (X) color</label>
+                          <input type="color" value={tooltipCloseColor} onChange={(e) => setTooltipCloseColor(e.target.value)} className="flow-appearance-color-input" aria-label="Close icon color" />
+                        </div>
                       </div>
-                      <div className="flow-appearance-color-row">
-                        <label className="flow-appearance-color-label">Color</label>
-                        <input type="color" value={tooltipColor} onChange={(e) => setTooltipColor(e.target.value)} className="flow-appearance-color-input" aria-label="Tooltip color" />
-                      </div>
-                      <div className="flow-appearance-color-row">
-                        <label className="flow-appearance-color-label">Close (X) color</label>
-                        <input type="color" value={tooltipCloseColor} onChange={(e) => setTooltipCloseColor(e.target.value)} className="flow-appearance-color-input" aria-label="Close icon color" />
-                      </div>
-                    </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -935,24 +1244,19 @@ function FlowStudio({ onClose, onSave }) {
                 )}
               </div>
             </div>
+            </div>
           )}
 
           {activeTab === 'visibility rules' && (
-            <>
-              <div className="studio-accordion">
-                <div className="accordion-body">
-                  <div className="config-sub-accordions">
-                    <div className="sub-accordion">
-                      <button className="sub-accordion-header" onClick={() => setWhereExpanded(!whereExpanded)}>
-                        <div className="sub-accordion-title-row">
-                          <MapPin size={16} className="sub-accordion-icon" />
-                          <span className="sub-accordion-title">Where does the flow appear</span>
-                        </div>
-                        {whereExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                      </button>
-                      {whereExpanded && (
-                        <div className="sub-accordion-body">
-                          <p className="config-placeholder-text">Configure where the flow will appear in the app.</p>
+            <div className="flow-config-accordions">
+              <div className="studio-accordion flow-config-accordion-item">
+                <button className="accordion-header" onClick={() => setWhereExpanded(!whereExpanded)}>
+                  <span className="accordion-title">Where does the flow appear</span>
+                  {whereExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                </button>
+                {whereExpanded && (
+                  <div className="accordion-body">
+                    <p className="config-placeholder-text">Configure where the flow will appear in the app.</p>
                           <div className="where-conditions">
                             {whereConditions.map((cond) => (
                               <div key={cond.id} className="where-condition-card">
@@ -1005,20 +1309,18 @@ function FlowStudio({ onClose, onSave }) {
                               <Plus size={14} /> Add condition
                             </button>
                           </div>
-                        </div>
-                      )}
-                    </div>
-                    <div className="sub-accordion">
-                      <button className="sub-accordion-header" onClick={() => setWhenExpanded(!whenExpanded)}>
-                        <div className="sub-accordion-title-row">
-                          <Clock size={16} className="sub-accordion-icon" />
-                          <span className="sub-accordion-title">When does the flow start and stop appearing</span>
-                        </div>
-                        {whenExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                      </button>
-                      {whenExpanded && (
-                        <div className="sub-accordion-body">
-                          <p className="config-placeholder-text">Set the timing rules for when the flow starts and stops appearing.</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="studio-accordion flow-config-accordion-item">
+                <button className="accordion-header" onClick={() => setWhenExpanded(!whenExpanded)}>
+                  <span className="accordion-title">When does the flow start and stop appearing</span>
+                  {whenExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                </button>
+                {whenExpanded && (
+                  <div className="accordion-body">
+                    <p className="config-placeholder-text">Set the timing rules for when the flow starts and stops appearing.</p>
                           <div className="when-conditions">
                             {whenStartConditions.map((cond) => (
                               <div key={cond.id} className="when-condition-card">
@@ -1069,20 +1371,18 @@ function FlowStudio({ onClose, onSave }) {
                               <Plus size={14} /> Add condition
                             </button>
                           </div>
-                        </div>
-                      )}
-                    </div>
-                    <div className="sub-accordion">
-                      <button className="sub-accordion-header" onClick={() => setWhoExpanded(!whoExpanded)}>
-                        <div className="sub-accordion-title-row">
-                          <Users size={16} className="sub-accordion-icon" />
-                          <span className="sub-accordion-title">Who does the flow appear to</span>
-                        </div>
-                        {whoExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                      </button>
-                      {whoExpanded && (
-                        <div className="sub-accordion-body">
-                          <p className="config-placeholder-text">Define the audience targeting rules for this flow.</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="studio-accordion flow-config-accordion-item">
+                <button className="accordion-header" onClick={() => setWhoExpanded(!whoExpanded)}>
+                  <span className="accordion-title">Who does the flow appear to</span>
+                  {whoExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                </button>
+                {whoExpanded && (
+                  <div className="accordion-body">
+                    <p className="config-placeholder-text">Define the audience targeting rules for this flow.</p>
                           <div className="who-conditions">
                             {whoConditions.map((cond) => (
                               <div key={cond.id} className="who-condition-card">
@@ -1129,12 +1429,13 @@ function FlowStudio({ onClose, onSave }) {
                               <Plus size={14} /> Add condition
                             </button>
                           </div>
-                        </div>
-                      )}
-                    </div>
                   </div>
-                </div>
+                )}
               </div>
+            </div>
+          )}
+                </>
+              )}
             </>
           )}
         </div>
@@ -1147,7 +1448,7 @@ function FlowStudio({ onClose, onSave }) {
             <span className="breadcrumb-sep">/</span>
             <a href="#" onClick={(e) => { e.preventDefault(); onClose(); }} className="breadcrumb-link">Create content</a>
             <span className="breadcrumb-sep">/</span>
-            <span className="breadcrumb-text">{flowName.trim() || 'Untitled Flow'}</span>
+            <span className="breadcrumb-current">{flowName.trim() || 'Untitled Flow'}</span>
           </div>
           <div className="header-main">
             <button className="back-button" onClick={onClose}><ChevronLeft size={20} /></button>
@@ -1159,21 +1460,21 @@ function FlowStudio({ onClose, onSave }) {
               onChange={(e) => setFlowName(e.target.value)}
               aria-label="Flow name"
             />
-            <div className="header-right" />
-          </div>
-          <div className="studio-tabs">
-            <button className={`studio-tab ${activeTab === 'setup' ? 'active' : ''}`} onClick={() => setActiveTab('setup')}>
-              <span>Setup</span>
-              {activeTab === 'setup' && <div className="tab-indicator" />}
-            </button>
-            <button className={`studio-tab ${activeTab === 'configuration' ? 'active' : ''}`} onClick={() => setActiveTab('configuration')}>
-              <span>Configuration</span>
-              {activeTab === 'configuration' && <div className="tab-indicator" />}
-            </button>
-            <button className={`studio-tab ${activeTab === 'visibility rules' ? 'active' : ''}`} onClick={() => setActiveTab('visibility rules')}>
-              <span>Visibility Rules</span>
-              {activeTab === 'visibility rules' && <div className="tab-indicator" />}
-            </button>
+            <div className="header-right">
+              <div className="version-input">
+                <input
+                  type="text"
+                  placeholder="Add app version"
+                  value={appVersion}
+                  onChange={(e) => setAppVersion(e.target.value)}
+                />
+                <ChevronDown size={16} className="input-icon" />
+              </div>
+              <button type="button" className="preview-button">
+                <CaptureIcon />
+                <span>Preview</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -1193,7 +1494,49 @@ function FlowStudio({ onClose, onSave }) {
                 return
               }
               if (typeof onSave === 'function') {
-                onSave({ name, type: 'Flow' })
+                onSave({
+                  name,
+                  type: 'Flow',
+                  id: editItem?.id,
+                  creationSnapshot: {
+                    kind: 'flow',
+                    v: FLOW_STUDIO_SNAPSHOT_V,
+                    activeTab,
+                    creationStage,
+                    flowPanelView,
+                    stepConfigId,
+                    activeStepId,
+                    isDevicePaired,
+                    isPairing,
+                    selectedScreen,
+                    flowStepsExpanded,
+                    flowSteps,
+                    flowName: name,
+                    flowDescription,
+                    flowTags,
+                    flowKeywords,
+                    flowAppType,
+                    appVersion,
+                    whereExpanded,
+                    whenExpanded,
+                    whoExpanded,
+                    whereConditions,
+                    whenStartConditions,
+                    whoConditions,
+                    configAppearanceExpanded,
+                    configPositionExpanded,
+                    configStepCompletionExpanded,
+                    configAdditionalOptionsExpanded,
+                    flowWidgetType,
+                    tooltipColor,
+                    tooltipCloseColor,
+                    tooltipPosition,
+                    completionMode,
+                    stepCompletionRules,
+                    optionalStep,
+                    showAsSpotlight,
+                  },
+                })
               }
               onClose()
             }}

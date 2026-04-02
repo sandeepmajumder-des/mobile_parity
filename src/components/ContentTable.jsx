@@ -1,3 +1,4 @@
+import { Play, Pencil, MoreHorizontal } from 'lucide-react'
 import './ContentTable.css'
 
 const contentData = [
@@ -14,8 +15,8 @@ const contentData = [
   },
   {
     id: 2,
-    name: 'Introduction to the team',
-    type: 'Lorem',
+    name: 'Welcome tour',
+    type: 'Flow',
     isFolder: false,
     platform: 'android',
     members: ['S', 'A', 'R'],
@@ -24,103 +25,113 @@ const contentData = [
   },
   {
     id: 3,
-    name: 'Dummy Flow',
-    type: 'Lorem',
+    name: 'Feature announcement',
+    type: 'Popup',
     isFolder: false,
     platform: 'android',
-    members: ['S', 'A', 'R'],
-    lastUpdated: 'June 26, 2024',
-    lastUpdatedBy: 'John G Tom'
+    members: ['S', 'M'],
+    lastUpdated: 'June 25, 2024',
+    lastUpdatedBy: 'Sarah Miller'
   },
   {
     id: 4,
-    name: 'Dummy Flow',
-    type: 'Lorem',
+    name: 'Profile completion tip',
+    type: 'Smart Tip',
     isFolder: false,
-    platform: 'android',
-    members: ['S', 'A', 'R'],
-    lastUpdated: 'June 26, 2024',
-    lastUpdatedBy: 'John G Tom'
+    platform: 'ios',
+    members: ['A', 'R'],
+    lastUpdated: 'June 24, 2024',
+    lastUpdatedBy: 'Alex Rivera'
   },
   {
     id: 5,
-    name: 'Dummy Flow',
-    type: 'Lorem',
+    name: 'New message indicator',
+    type: 'Beacon',
     isFolder: false,
     platform: 'android',
     members: ['S', 'A', 'R'],
-    lastUpdated: 'June 26, 2024',
+    lastUpdated: 'June 23, 2024',
     lastUpdatedBy: 'John G Tom'
   },
   {
     id: 6,
-    name: 'Dummy Flow',
-    type: 'Lorem',
+    name: 'App settings guide',
+    type: 'Self Help',
     isFolder: false,
     platform: 'ios',
-    members: ['S', 'A', 'R'],
-    lastUpdated: 'June 26, 2024',
-    lastUpdatedBy: 'John G Tom'
+    members: ['M', 'R'],
+    lastUpdated: 'June 22, 2024',
+    lastUpdatedBy: 'Mike Chen'
   },
   {
     id: 7,
-    name: 'Dummy Flow',
-    type: 'Lorem',
+    name: 'Account setup checklist',
+    type: 'Task List',
     isFolder: false,
-    platform: 'ios',
-    members: ['S', 'A', 'R'],
-    lastUpdated: 'June 26, 2024',
-    lastUpdatedBy: 'John G Tom'
+    platform: 'android',
+    members: ['S', 'A'],
+    lastUpdated: 'June 21, 2024',
+    lastUpdatedBy: 'Sarah Miller'
   },
   {
     id: 8,
-    name: 'Dummy Flow',
-    type: 'Lorem',
+    name: 'Checkout flow walkthrough',
+    type: 'Flow',
     isFolder: false,
     platform: 'ios',
-    members: ['S', 'A', 'R'],
-    lastUpdated: 'June 26, 2024',
-    lastUpdatedBy: 'John G Tom'
+    members: ['A', 'R', 'M'],
+    lastUpdated: 'June 20, 2024',
+    lastUpdatedBy: 'Alex Rivera'
   },
   {
     id: 9,
-    name: 'Dummy Flow',
-    type: 'Lorem',
+    name: 'Subscription upgrade prompt',
+    type: 'Popup',
     isFolder: false,
     platform: 'ios',
-    members: ['S', 'A', 'R'],
-    lastUpdated: 'June 26, 2024',
-    lastUpdatedBy: 'John G Tom'
+    members: ['S', 'M'],
+    lastUpdated: 'June 19, 2024',
+    lastUpdatedBy: 'Mike Chen'
   },
   {
     id: 10,
-    name: 'Dummy Flow',
-    type: 'Lorem',
+    name: 'Search filter helper',
+    type: 'Smart Tip',
     isFolder: false,
-    platform: 'ios',
-    members: ['S', 'A', 'R'],
-    lastUpdated: 'June 26, 2024',
+    platform: 'android',
+    members: ['A', 'R'],
+    lastUpdated: 'June 18, 2024',
     lastUpdatedBy: 'John G Tom'
   },
   {
     id: 11,
-    name: 'Dummy Flow',
-    type: 'Lorem',
+    name: 'Cart item highlight',
+    type: 'Beacon',
     isFolder: false,
-    platform: 'android',
+    platform: 'ios',
     members: ['S', 'A', 'R'],
-    lastUpdated: 'June 26, 2024',
-    lastUpdatedBy: 'John G Tom'
+    lastUpdated: 'June 17, 2024',
+    lastUpdatedBy: 'Sarah Miller'
   },
   {
     id: 12,
-    name: 'Dummy Flow',
-    type: 'Lorem',
+    name: 'FAQ & Troubleshooting',
+    type: 'Self Help',
     isFolder: false,
     platform: 'android',
-    members: ['S', 'A', 'R'],
-    lastUpdated: 'June 26, 2024',
-    lastUpdatedBy: 'John G Tom'
+    members: ['M', 'R'],
+    lastUpdated: 'June 16, 2024',
+    lastUpdatedBy: 'Mike Chen'
+  },
+  {
+    id: 13,
+    name: 'First purchase checklist',
+    type: 'Task List',
+    isFolder: false,
+    platform: 'ios',
+    members: ['S', 'A'],
+    lastUpdated: 'June 15, 2024',
+    lastUpdatedBy: 'Alex Rivera'
   },
 ]
 
@@ -142,7 +153,8 @@ function FolderIcon() {
   )
 }
 
-function DirectionsIcon() {
+// Content type icons
+function FlowIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
       <path d="M10 3V17M10 3L6 7M10 3L14 7" stroke="#6B697B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -152,13 +164,70 @@ function DirectionsIcon() {
   )
 }
 
-function MouseIcon() {
+function PopupIcon() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-      <rect x="6" y="4" width="12" height="16" rx="6" stroke="#6B697B" strokeWidth="1.5"/>
-      <path d="M12 8V10" stroke="#6B697B" strokeWidth="1.5" strokeLinecap="round"/>
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <rect x="3" y="4" width="14" height="12" rx="2" stroke="#6B697B" strokeWidth="1.5"/>
+      <path d="M3 8H17" stroke="#6B697B" strokeWidth="1.5"/>
+      <circle cx="5.5" cy="6" r="0.75" fill="#6B697B"/>
+      <circle cx="7.5" cy="6" r="0.75" fill="#6B697B"/>
     </svg>
   )
+}
+
+function SmartTipIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path d="M4 4H16C16.5523 4 17 4.44772 17 5V13C17 13.5523 16.5523 14 16 14H6L3 17V5C3 4.44772 3.44772 4 4 4Z" stroke="#6B697B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M10 7V10" stroke="#6B697B" strokeWidth="1.5" strokeLinecap="round"/>
+      <circle cx="10" cy="12" r="0.75" fill="#6B697B"/>
+    </svg>
+  )
+}
+
+function BeaconIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <circle cx="10" cy="10" r="3" stroke="#6B697B" strokeWidth="1.5"/>
+      <circle cx="10" cy="10" r="7" stroke="#6B697B" strokeWidth="1.5" strokeDasharray="2 2"/>
+    </svg>
+  )
+}
+
+function SelfHelpIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <circle cx="10" cy="10" r="7" stroke="#6B697B" strokeWidth="1.5"/>
+      <path d="M8 8C8 6.89543 8.89543 6 10 6C11.1046 6 12 6.89543 12 8C12 8.74028 11.5978 9.38663 11 9.73244V11" stroke="#6B697B" strokeWidth="1.5" strokeLinecap="round"/>
+      <circle cx="10" cy="13.5" r="0.75" fill="#6B697B"/>
+    </svg>
+  )
+}
+
+function TaskListIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path d="M4 5L5.5 6.5L8 4" stroke="#6B697B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M11 5H16" stroke="#6B697B" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M4 10L5.5 11.5L8 9" stroke="#6B697B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M11 10H16" stroke="#6B697B" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M4 15L5.5 16.5L8 14" stroke="#6B697B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M11 15H16" stroke="#6B697B" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  )
+}
+
+// Get icon based on content type
+function getContentTypeIcon(type) {
+  switch (type) {
+    case 'Flow': return <FlowIcon />
+    case 'Popup': return <PopupIcon />
+    case 'Smart Tip': return <SmartTipIcon />
+    case 'Beacon': return <BeaconIcon />
+    case 'Self Help': return <SelfHelpIcon />
+    case 'Task List': return <TaskListIcon />
+    default: return <FlowIcon />
+  }
 }
 
 function AndroidIcon() {
@@ -201,8 +270,28 @@ function SortAscIcon() {
   )
 }
 
-function ContentTable({ items }) {
+function ContentTable({ items, selectedIds = [], onSelectionChange, onEditItem }) {
   const data = items != null ? items : contentData
+  
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      onSelectionChange?.(data.map(item => item.id))
+    } else {
+      onSelectionChange?.([])
+    }
+  }
+  
+  const handleSelectItem = (itemId, checked) => {
+    if (checked) {
+      onSelectionChange?.([...selectedIds, itemId])
+    } else {
+      onSelectionChange?.(selectedIds.filter(id => id !== itemId))
+    }
+  }
+  
+  const allSelected = data.length > 0 && selectedIds.length === data.length
+  const someSelected = selectedIds.length > 0 && selectedIds.length < data.length
+  
   return (
     <div className="table-container">
       <table className="content-table">
@@ -210,7 +299,12 @@ function ContentTable({ items }) {
           <tr>
             <th className="col-checkbox">
               <div className="checkbox-wrapper">
-                <input type="checkbox" />
+                <input 
+                  type="checkbox" 
+                  checked={allSelected}
+                  ref={(el) => { if (el) el.indeterminate = someSelected }}
+                  onChange={handleSelectAll}
+                />
               </div>
             </th>
             <th className="col-name">
@@ -233,24 +327,58 @@ function ContentTable({ items }) {
         </thead>
         <tbody>
           {data.map((item) => (
-            <tr key={item.id}>
+            <tr key={item.id} className={selectedIds.includes(item.id) ? 'row-selected' : ''}>
               <td className="col-checkbox">
                 <div className="checkbox-wrapper">
-                  <input type="checkbox" />
+                  <input 
+                    type="checkbox" 
+                    checked={selectedIds.includes(item.id)}
+                    onChange={(e) => handleSelectItem(item.id, e.target.checked)}
+                  />
                 </div>
               </td>
               <td className="col-name">
                 <div className="name-cell">
-                  {item.isFolder ? <FolderIcon /> : <DirectionsIcon />}
+                  {item.isFolder ? <FolderIcon /> : getContentTypeIcon(item.type)}
                   <span className="name-text">{item.name}</span>
                   {item.count && <span className="item-count">{item.count}</span>}
+                  {!item.isFolder && (
+                    <div className="name-cell-actions" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        className="name-cell-action-btn name-cell-action-btn--ghost"
+                        title="Play"
+                        aria-label={`Play ${item.name}`}
+                      >
+                        <Play size={18} strokeWidth={1.5} aria-hidden />
+                      </button>
+                      <span className="name-cell-tooltip-host">
+                        <button
+                          type="button"
+                          className="name-cell-action-btn name-cell-action-btn--edit"
+                          aria-label={`Edit ${item.name}`}
+                          onClick={() => onEditItem?.(item)}
+                        >
+                          <Pencil size={14} strokeWidth={1.75} aria-hidden />
+                        </button>
+                        <span className="name-cell-action-tooltip" role="tooltip">
+                          Edit
+                        </span>
+                      </span>
+                      <button
+                        type="button"
+                        className="name-cell-action-btn name-cell-action-btn--ghost"
+                        title="More options"
+                        aria-label={`More options for ${item.name}`}
+                      >
+                        <MoreHorizontal size={18} strokeWidth={1.5} aria-hidden />
+                      </button>
+                    </div>
+                  )}
                 </div>
               </td>
               <td className="col-type">
-                <div className="type-cell">
-                  {!item.isFolder && <MouseIcon />}
-                  <span>{item.type}</span>
-                </div>
+                <span className="type-label">{item.type}</span>
               </td>
               <td className="col-platform">
                 <div className="platform-cell">

@@ -1,15 +1,21 @@
 import { useState } from 'react'
-import { 
-  Search, 
+import {
+  Search,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
   FolderPlus,
-  ChevronUp
+  ChevronUp,
+  X,
+  Send,
+  FolderInput,
+  Share2,
+  Tag,
+  Archive,
+  Trash2,
 } from 'lucide-react'
 import ContentTable from './ContentTable'
 import { initialContentData } from './ContentTable'
-import PopupTypeModal from './PopupTypeModal'
 import MobileStudio from './MobileStudio'
 import FlowStudio from './FlowStudio'
 import './ContentArea.css'
@@ -42,29 +48,6 @@ function AppWindowIcon() {
   )
 }
 
-function HelpIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.5"/>
-      <path d="M8 8C8 6.89543 8.89543 6 10 6C11.1046 6 12 6.89543 12 8C12 8.74028 11.5978 9.38663 11 9.73244V11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-      <circle cx="10" cy="13.5" r="0.75" fill="currentColor"/>
-    </svg>
-  )
-}
-
-function ListCheckIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d="M4 5L5.5 6.5L8 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M11 5H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-      <path d="M4 10L5.5 11.5L8 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M11 10H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-      <path d="M4 15L5.5 16.5L8 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M11 15H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
-  )
-}
-
 function LivePhotoIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -80,6 +63,34 @@ function MessageReportIcon() {
       <path d="M4 4H16C16.5523 4 17 4.44772 17 5V13C17 13.5523 16.5523 14 16 14H6L3 17V5C3 4.44772 3.44772 4 4 4Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M10 7V10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
       <circle cx="10" cy="12" r="0.75" fill="currentColor"/>
+    </svg>
+  )
+}
+
+function SelfHelpMenuIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.5"/>
+      <path
+        d="M8 8C8 6.89543 8.89543 6 10 6C11.1046 6 12 6.89543 12 8C12 8.74028 11.5978 9.38663 11 9.73244V11"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <circle cx="10" cy="13.5" r="0.75" fill="currentColor"/>
+    </svg>
+  )
+}
+
+function TaskListMenuIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path d="M4 5L5.5 6.5L8 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M11 5H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M4 10L5.5 11.5L8 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M11 10H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M4 15L5.5 16.5L8 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M11 15H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
     </svg>
   )
 }
@@ -120,84 +131,188 @@ function ListIcon() {
   )
 }
 
-const dropdownItems = [
-  { id: 'flow', label: 'Flow', icon: DirectionsIcon },
-  { id: 'popup', label: 'Pop-up', icon: AppWindowIcon },
-  { id: 'selfhelp', label: 'Self Help', icon: HelpIcon },
-  { id: 'tasklist', label: 'Task list', icon: ListCheckIcon },
-  { id: 'beacon', label: 'Beacon', icon: LivePhotoIcon },
-  { id: 'smarttip', label: 'Smart-tip', icon: MessageReportIcon },
+function CreateMenuIcon({ Icon, customSvg }) {
+  if (customSvg) return <Icon />
+  return <Icon size={20} strokeWidth={1.5} aria-hidden />
+}
+
+/** Create Content dropdown: flows + core widgets (subset of V2 studio catalog). */
+const CREATE_MENU_SECTIONS = [
+  {
+    id: 'content',
+    items: [
+      { id: 'flows', label: 'Flows', Icon: DirectionsIcon, customSvg: true, route: 'flow' },
+    ],
+  },
+  {
+    id: 'widgets',
+    items: [
+      { id: 'beacon', label: 'Beacon', Icon: LivePhotoIcon, customSvg: true, route: 'beacon' },
+      { id: 'smarttip', label: 'Smart-tip', Icon: MessageReportIcon, customSvg: true, route: 'smarttip' },
+      { id: 'popup', label: 'Pop-up', Icon: AppWindowIcon, customSvg: true, route: 'popup' },
+      { id: 'self-help', label: 'Self help', Icon: SelfHelpMenuIcon, customSvg: true, route: 'self-help' },
+      { id: 'task-list', label: 'Task list', Icon: TaskListMenuIcon, customSvg: true, route: 'task-list' },
+    ],
+  },
 ]
+
+const STUB_CATALOG_HINT =
+  'Same tile as the V2 studio panel — not wired to a creation flow in this demo (matches V2 console.log).'
 
 function ContentArea() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [showPopupModal, setShowPopupModal] = useState(false)
   const [showMobileStudio, setShowMobileStudio] = useState(false)
   const [showFlowStudio, setShowFlowStudio] = useState(false)
+  /** Row opened from dashboard Edit (Flow / Popup / Smart Tip / Beacon). */
+  const [editTarget, setEditTarget] = useState(null)
+  const [parityNotice, setParityNotice] = useState(null)
   const [selectedPopupType, setSelectedPopupType] = useState(null)
   const [contentItems, setContentItems] = useState(() => [...initialContentData])
   const [activeContentTab, setActiveContentTab] = useState('published')
+  const [selectedIds, setSelectedIds] = useState([])
 
   const handleCreateClick = () => {
     setIsDropdownOpen(!isDropdownOpen)
   }
 
-  const handleItemClick = (itemId) => {
+  const handleCreateMenuPick = (item) => {
     setIsDropdownOpen(false)
+    setParityNotice(null)
 
-    if (itemId === 'popup') {
-      setShowPopupModal(true)
-    } else if (itemId === 'flow') {
-      setShowFlowStudio(true)
-    } else {
-      console.log('Selected:', itemId)
+    switch (item.route) {
+      case 'flow':
+        setEditTarget(null)
+        setShowFlowStudio(true)
+        break
+      case 'popup':
+        setEditTarget(null)
+        setSelectedPopupType(null)
+        setShowMobileStudio(true)
+        break
+      case 'smarttip':
+        setEditTarget(null)
+        setSelectedPopupType('smarttip')
+        setShowMobileStudio(true)
+        break
+      case 'beacon':
+        setEditTarget(null)
+        setSelectedPopupType('beacon')
+        setShowMobileStudio(true)
+        break
+      case 'self-help':
+        addDraftItem({ name: '', type: 'Self Help' })
+        break
+      case 'task-list':
+        addDraftItem({ name: '', type: 'Task List' })
+        break
+      case 'stub':
+      default:
+        setParityNotice(`${item.label}: ${STUB_CATALOG_HINT}`)
+        break
     }
-  }
-
-  const handlePopupTypeSelect = (typeId) => {
-    console.log('Selected popup type:', typeId)
-    setSelectedPopupType(typeId)
-    setShowPopupModal(false)
-    setShowMobileStudio(true)
   }
 
   const handleCloseMobileStudio = () => {
     setShowMobileStudio(false)
     setSelectedPopupType(null)
+    setEditTarget(null)
+  }
+
+  const handleCloseFlowStudio = () => {
+    setShowFlowStudio(false)
+    setEditTarget(null)
+  }
+
+  const handleEditItem = (item) => {
+    if (!item || item.isFolder) return
+    setParityNotice(null)
+    setEditTarget(item)
+    switch (item.type) {
+      case 'Flow':
+        setShowFlowStudio(true)
+        break
+      case 'Popup':
+      case 'Smart Tip':
+      case 'Beacon':
+        setSelectedPopupType(null)
+        setShowMobileStudio(true)
+        break
+      default:
+        setEditTarget(null)
+        setParityNotice(`Edit for ${item.type}: ${STUB_CATALOG_HINT}`)
+    }
   }
 
   const addDraftItem = (payload) => {
-    const { name, type } = payload
-    setContentItems(prev => [{
-      id: Date.now(),
-      name: name || (type === 'Flow' ? 'Untitled Flow' : 'Untitled Pop-up'),
-      type,
-      status: 'draft',
-      isFolder: false,
-      platform: null,
-      members: ['S', 'A', 'R'],
-      lastUpdated: formatDate(),
-      lastUpdatedBy: 'You'
-    }, ...prev])
+    const { name, type, id: existingId, creationSnapshot } = payload
+    const defaultName =
+      type === 'Flow'
+        ? 'Untitled Flow'
+        : type === 'Smart Tip'
+          ? 'Untitled Smart Tip'
+          : type === 'Beacon'
+            ? 'Untitled Beacon'
+            : type === 'Self Help'
+              ? 'Untitled Self Help'
+              : type === 'Task List'
+                ? 'Untitled Task List'
+                : 'Untitled Pop-up'
+
+    if (existingId != null) {
+      setContentItems((prev) =>
+        prev.map((item) =>
+          item.id === existingId
+            ? {
+                ...item,
+                name: name || item.name,
+                type: type || item.type,
+                lastUpdated: formatDate(),
+                lastUpdatedBy: 'You',
+                ...(creationSnapshot != null ? { creationSnapshot } : {}),
+              }
+            : item
+        )
+      )
+      setActiveContentTab('draft')
+      return
+    }
+
+    setContentItems((prev) => [
+      {
+        id: Date.now(),
+        name: name || defaultName,
+        type,
+        status: 'draft',
+        isFolder: false,
+        platform: null,
+        members: ['S', 'A', 'R'],
+        lastUpdated: formatDate(),
+        lastUpdatedBy: 'You',
+        ...(creationSnapshot != null ? { creationSnapshot } : {}),
+      },
+      ...prev,
+    ])
     setActiveContentTab('draft')
   }
 
-  // If Flow Studio is open, show flow creation journey
   if (showFlowStudio) {
     return (
       <FlowStudio
-        onClose={() => setShowFlowStudio(false)}
+        key={editTarget?.id != null ? `flow-edit-${editTarget.id}` : 'flow-create'}
+        editItem={editTarget}
+        onClose={handleCloseFlowStudio}
         onSave={addDraftItem}
       />
     )
   }
 
-  // If Mobile Studio is open, show popup creation journey
   if (showMobileStudio) {
     return (
       <MobileStudio
+        key={editTarget?.id != null ? `mobile-edit-${editTarget.id}` : 'mobile-create'}
         onClose={handleCloseMobileStudio}
-        popupType={selectedPopupType}
+        popupType={editTarget ? null : selectedPopupType}
+        editItem={editTarget}
         onSave={addDraftItem}
       />
     )
@@ -213,6 +328,20 @@ function ContentArea() {
 
   return (
     <main className="content-area">
+      {parityNotice && (
+        <div className="create-content-notice" role="status">
+          <span className="create-content-notice-text">{parityNotice}</span>
+          <button
+            type="button"
+            className="create-content-notice-dismiss"
+            aria-label="Dismiss"
+            onClick={() => setParityNotice(null)}
+          >
+            <X size={16} />
+          </button>
+        </div>
+      )}
+
       <div className="content-header">
         <div className="header-left">
           <div className="breadcrumb">
@@ -230,16 +359,27 @@ function ContentArea() {
             </button>
             
             {isDropdownOpen && (
-              <div className="create-dropdown">
-                {dropdownItems.map((item) => (
-                  <button 
-                    key={item.id} 
-                    className="dropdown-item"
-                    onClick={() => handleItemClick(item.id)}
-                  >
-                    <item.icon />
-                    <span>{item.label}</span>
-                  </button>
+              <div className="create-dropdown create-dropdown--v2-parity" role="menu" aria-label="Create content catalog">
+                {CREATE_MENU_SECTIONS.map((section) => (
+                  <div key={section.id} className="create-dropdown-section">
+                    {section.label ? (
+                      <div className="create-dropdown-section-label" aria-hidden>
+                        {section.label}
+                      </div>
+                    ) : null}
+                    {section.items.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        className="dropdown-item"
+                        role="menuitem"
+                        onClick={() => handleCreateMenuPick(item)}
+                      >
+                        <CreateMenuIcon Icon={item.Icon} customSvg={item.customSvg} />
+                        <span>{item.label}</span>
+                      </button>
+                    ))}
+                  </div>
                 ))}
               </div>
             )}
@@ -309,9 +449,56 @@ function ContentArea() {
         </div>
       </div>
 
+      {/* Selection Action Bar */}
+      {selectedIds.length > 0 && (
+        <div className="selection-action-bar">
+          <div className="selection-count">
+            <span className="selection-badge">{selectedIds.length} selected</span>
+            <button 
+              className="selection-clear-btn" 
+              onClick={() => setSelectedIds([])}
+              aria-label="Clear selection"
+            >
+              <X size={14} />
+            </button>
+          </div>
+          <div className="selection-actions">
+            <button className="selection-action-btn">
+              <Send size={16} />
+              <span>Send to Ready</span>
+            </button>
+            <button className="selection-action-btn">
+              <FolderInput size={16} />
+              <span>Move to folder</span>
+            </button>
+            <button className="selection-action-btn">
+              <Share2 size={16} />
+              <span>Share</span>
+            </button>
+            <button className="selection-action-btn">
+              <Tag size={16} />
+              <span>Tags</span>
+            </button>
+            <button className="selection-action-btn">
+              <Archive size={16} />
+              <span>Archive</span>
+            </button>
+            <button className="selection-action-btn selection-action-btn--danger">
+              <Trash2 size={16} />
+              <span>Delete content</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="divider-horizontal" />
 
-      <ContentTable items={sortedItems} />
+      <ContentTable 
+        items={sortedItems} 
+        selectedIds={selectedIds}
+        onSelectionChange={setSelectedIds}
+        onEditItem={handleEditItem}
+      />
 
       <div className="pagination">
         <div className="pagination-info">
@@ -334,12 +521,6 @@ function ContentArea() {
         </div>
       </div>
 
-      {showPopupModal && (
-        <PopupTypeModal 
-          onClose={() => setShowPopupModal(false)}
-          onSelect={handlePopupTypeSelect}
-        />
-      )}
     </main>
   )
 }

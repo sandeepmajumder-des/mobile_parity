@@ -1,17 +1,72 @@
+import { useState } from 'react'
 import { 
   Network,
   ChevronsUpDown,
   ChevronLeft,
+  ChevronUp,
+  ChevronDown,
+  FileText,
+  Settings2,
+  Users,
+  Cog,
+  Smartphone,
 } from 'lucide-react'
 import './Sidebar.css'
 
 const navItems = [
-  { id: 'content', label: 'Content', active: true, icon: 'layout-grid' },
+  { id: 'content', label: 'Content', icon: 'layout-grid' },
   { id: 'analytics', label: 'Mobile analytics', icon: 'report-analytics' },
   { id: 'style', label: 'Style', icon: 'color-swatch' },
-  { id: 'tags', label: 'Tags', icon: 'tags' },
-  { id: 'testing', label: 'Auto testing', icon: 'test-pipe' },
   { id: 'settings', label: 'Settings', icon: 'settings' },
+]
+
+const settingsMenu = [
+  {
+    id: 'app-screens',
+    label: 'App screens',
+    icon: Smartphone,
+    items: [
+      { id: 'manage-screens', label: 'Manage screens' },
+      { id: 'screen-settings', label: 'Screen settings' },
+    ]
+  },
+  {
+    id: 'content',
+    label: 'Content',
+    icon: FileText,
+    items: [
+      { id: 'translations', label: 'Translations' },
+      { id: 'video', label: 'Video' },
+    ]
+  },
+  {
+    id: 'integrations',
+    label: 'Integrations',
+    icon: Settings2,
+    items: [
+      { id: 'repositories', label: 'Repositories' },
+      { id: 'video-channels', label: 'Video channels' },
+      { id: 'app-integrations', label: 'App integrations' },
+    ]
+  },
+  {
+    id: 'team',
+    label: 'Team',
+    icon: Users,
+    items: [
+      { id: 'teammates', label: 'Teammates', badge: 'New' },
+      { id: 'team-audit-logs', label: 'Team audit logs' },
+    ]
+  },
+  {
+    id: 'setup',
+    label: 'Setup',
+    icon: Cog,
+    items: [
+      { id: 'api-token', label: 'API token' },
+      { id: 'advanced-customisation', label: 'Advanced customisation' },
+    ]
+  },
 ]
 
 // Custom icons matching Figma design
@@ -46,26 +101,6 @@ function ColorSwatchIcon() {
   )
 }
 
-function TagsIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d="M3 7.5V5C3 3.89543 3.89543 3 5 3H7.5L16.5 12C17.2929 12.7929 17.2929 14.0929 16.5 14.8858L14.8858 16.5C14.0929 17.2929 12.7929 17.2929 12 16.5L3 7.5Z" stroke="currentColor" strokeWidth="1.5"/>
-      <circle cx="6.5" cy="6.5" r="1" fill="currentColor"/>
-    </svg>
-  )
-}
-
-function TestPipeIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d="M8 3V8L4 14C3.5 15 4 16.5 5.5 16.5H14.5C16 16.5 16.5 15 16 14L12 8V3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-      <path d="M6 3H14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-      <circle cx="8" cy="12" r="1" fill="currentColor"/>
-      <circle cx="12" cy="13" r="1" fill="currentColor"/>
-    </svg>
-  )
-}
-
 function SettingsIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -94,80 +129,118 @@ function NotificationIcon() {
   )
 }
 
+function ResourcesIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M7 7H13M7 10H13M7 13H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  )
+}
+
+function ChatIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path d="M17 10C17 13.866 13.866 17 10 17C8.79 17 7.65 16.71 6.64 16.19L3 17L3.81 13.36C3.29 12.35 3 11.21 3 10C3 6.134 6.134 3 10 3C13.866 3 17 6.134 17 10Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
+}
+
 function getNavIcon(iconName) {
   switch(iconName) {
     case 'layout-grid': return <LayoutGridIcon />
     case 'report-analytics': return <ReportAnalyticsIcon />
     case 'color-swatch': return <ColorSwatchIcon />
-    case 'tags': return <TagsIcon />
-    case 'test-pipe': return <TestPipeIcon />
     case 'settings': return <SettingsIcon />
     default: return <LayoutGridIcon />
   }
 }
 
-function Sidebar() {
+function Sidebar({ activeNav = 'content', onNavSelect }) {
+  const [showSettingsPanel, setShowSettingsPanel] = useState(false)
+  const [expandedSections, setExpandedSections] = useState(['app-screens', 'content', 'integrations', 'team', 'setup'])
+  const [activeSettingsItem, setActiveSettingsItem] = useState('video')
+
+  const handleNavClick = (itemId) => {
+    if (itemId === 'settings') {
+      setShowSettingsPanel(true)
+    } else {
+      setShowSettingsPanel(false)
+      onNavSelect?.(itemId)
+    }
+  }
+
+  const toggleSection = (sectionId) => {
+    setExpandedSections(prev => 
+      prev.includes(sectionId) 
+        ? prev.filter(id => id !== sectionId)
+        : [...prev, sectionId]
+    )
+  }
+
   return (
-    <aside className="sidebar">
-      <div className="sidebar-top">
-        <div className="sidebar-header">
-          <div className="header-left">
-            <div className="logo">
-              <div className="logo-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M16 8L20 12L16 16" fill="#FBA450"/>
-                  <path d="M8 8L4 12L8 16" fill="#FBA450"/>
-                  <path d="M16 8L12 4L8 8L12 12L16 8Z" fill="#F55800"/>
-                  <path d="M16 16L12 20L8 16L12 12L16 16Z" fill="#F55800"/>
-                  <path d="M12 12L16 8L20 12L16 16L12 12Z" fill="#C43F27"/>
-                  <path d="M12 12L8 8L4 12L8 16L12 12Z" fill="#FA8A1F"/>
-                </svg>
+    <div className="sidebar-wrapper">
+      <aside className="sidebar">
+        <div className="sidebar-top">
+          <div className="sidebar-header">
+            <div className="header-left">
+              <div className="logo">
+                <div className="logo-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M16 8L20 12L16 16" fill="#FBA450"/>
+                    <path d="M8 8L4 12L8 16" fill="#FBA450"/>
+                    <path d="M16 8L12 4L8 8L12 12L16 8Z" fill="#C84900"/>
+                    <path d="M16 16L12 20L8 16L12 12L16 16Z" fill="#C84900"/>
+                    <path d="M12 12L16 8L20 12L16 16L12 12Z" fill="#8B3A00"/>
+                    <path d="M12 12L8 8L4 12L8 16L12 12Z" fill="#FA8A1F"/>
+                  </svg>
+                </div>
+                <span className="logo-text">Guidance</span>
               </div>
-              <span className="logo-text">Guidance</span>
+            </div>
+            <div className="header-actions">
+              <button className="menu-btn">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <rect x="3" y="3" width="4" height="4" rx="1" fill="currentColor"/>
+                  <rect x="8" y="3" width="4" height="4" rx="1" fill="currentColor"/>
+                  <rect x="13" y="3" width="4" height="4" rx="1" fill="currentColor"/>
+                  <rect x="3" y="8" width="4" height="4" rx="1" fill="currentColor"/>
+                  <rect x="8" y="8" width="4" height="4" rx="1" fill="currentColor"/>
+                  <rect x="13" y="8" width="4" height="4" rx="1" fill="currentColor"/>
+                  <rect x="3" y="13" width="4" height="4" rx="1" fill="currentColor"/>
+                  <rect x="8" y="13" width="4" height="4" rx="1" fill="currentColor"/>
+                  <rect x="13" y="13" width="4" height="4" rx="1" fill="currentColor"/>
+                </svg>
+              </button>
             </div>
           </div>
-          <div className="header-actions">
-            <button className="menu-btn">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <rect x="3" y="3" width="4" height="4" rx="1" fill="currentColor"/>
-                <rect x="8" y="3" width="4" height="4" rx="1" fill="currentColor"/>
-                <rect x="13" y="3" width="4" height="4" rx="1" fill="currentColor"/>
-                <rect x="3" y="8" width="4" height="4" rx="1" fill="currentColor"/>
-                <rect x="8" y="8" width="4" height="4" rx="1" fill="currentColor"/>
-                <rect x="13" y="8" width="4" height="4" rx="1" fill="currentColor"/>
-                <rect x="3" y="13" width="4" height="4" rx="1" fill="currentColor"/>
-                <rect x="8" y="13" width="4" height="4" rx="1" fill="currentColor"/>
-                <rect x="13" y="13" width="4" height="4" rx="1" fill="currentColor"/>
-              </svg>
-            </button>
+
+          <div className="divider" />
+
+          <div className="account-switcher">
+            <div className="account-icon">
+              <Network size={18} />
+            </div>
+            <span className="account-name">Sandeep_old_self...</span>
+            <ChevronsUpDown size={16} className="chevron" />
           </div>
+
+          <nav className="nav-menu">
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className={`nav-item ${activeNav === item.id ? 'active' : ''} ${item.id === 'settings' && showSettingsPanel ? 'active' : ''}`}
+                onClick={() => handleNavClick(item.id)}
+              >
+                <span className="icon-container">
+                  {getNavIcon(item.icon)}
+                </span>
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </nav>
         </div>
-
-        <div className="divider" />
-
-        <div className="account-switcher">
-          <div className="account-icon">
-            <Network size={18} />
-          </div>
-          <span className="account-name">Ryan_LCG_spoutbout</span>
-          <ChevronsUpDown size={16} className="chevron" />
-        </div>
-
-        <nav className="nav-menu">
-          {navItems.map((item) => (
-            <a 
-              key={item.id} 
-              href="#" 
-              className={`nav-item ${item.active ? 'active' : ''}`}
-            >
-              <span className="icon-container">
-                {getNavIcon(item.icon)}
-              </span>
-              <span>{item.label}</span>
-            </a>
-          ))}
-        </nav>
-      </div>
 
       <div className="spacer" />
 
@@ -176,25 +249,31 @@ function Sidebar() {
       <div className="sidebar-footer">
         <div className="user-profile">
           <div className="avatar-container">
-            <div className="avatar">
-              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=John&backgroundColor=c0aede" alt="John Doe" />
+            <div className="avatar avatar-initial">
+              <span>S</span>
             </div>
           </div>
-          <span className="user-name">Ryan_LCG</span>
+          <span className="user-name">Sandeep Majumder</span>
         </div>
         
-        <a href="#" className="nav-item footer-item">
-          <span className="icon-container">
-            <HelpIcon />
-          </span>
-          <span>Help and support</span>
-        </a>
         <a href="#" className="nav-item footer-item notification-item">
           <span className="icon-container notification-icon-wrap">
             <NotificationIcon />
             <span className="notification-dot" aria-hidden />
           </span>
           <span>Notifications</span>
+        </a>
+        <a href="#" className="nav-item footer-item">
+          <span className="icon-container">
+            <ResourcesIcon />
+          </span>
+          <span>Resources</span>
+        </a>
+        <a href="#" className="nav-item footer-item">
+          <span className="icon-container">
+            <ChatIcon />
+          </span>
+          <span>Chat</span>
         </a>
 
         <div className="divider" />
@@ -203,17 +282,71 @@ function Sidebar() {
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
             <path d="M16 8L20 12L16 16" fill="#FBA450"/>
             <path d="M8 8L4 12L8 16" fill="#FBA450"/>
-            <path d="M16 8L12 4L8 8L12 12L16 8Z" fill="#F55800"/>
-            <path d="M16 16L12 20L8 16L12 12L16 16Z" fill="#F55800"/>
+            <path d="M16 8L12 4L8 8L12 12L16 8Z" fill="#C84900"/>
+            <path d="M16 16L12 20L8 16L12 12L16 16Z" fill="#C84900"/>
           </svg>
           <span className="whatfix-text">whatfix</span>
         </div>
       </div>
 
-      <button className="collapse-btn">
-        <ChevronLeft size={14} />
-      </button>
-    </aside>
+        <button className="collapse-btn">
+          <ChevronLeft size={14} />
+        </button>
+      </aside>
+
+      {/* Settings Sub-Navigation Panel */}
+      {showSettingsPanel && (
+        <div className="settings-panel">
+          <div className="settings-panel-header">
+            <button 
+              className="settings-back-btn"
+              onClick={() => setShowSettingsPanel(false)}
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <h2 className="settings-panel-title">Settings</h2>
+          </div>
+
+          <div className="settings-panel-content">
+            {settingsMenu.map((section) => (
+              <div key={section.id} className="settings-section">
+                <button 
+                  className="settings-section-header"
+                  onClick={() => toggleSection(section.id)}
+                >
+                  <div className="settings-section-left">
+                    <section.icon size={18} className="settings-section-icon" />
+                    <span className="settings-section-label">{section.label}</span>
+                  </div>
+                  {expandedSections.includes(section.id) ? (
+                    <ChevronUp size={18} className="settings-section-chevron" />
+                  ) : (
+                    <ChevronDown size={18} className="settings-section-chevron" />
+                  )}
+                </button>
+
+                {expandedSections.includes(section.id) && (
+                  <div className="settings-section-items">
+                    {section.items.map((item) => (
+                      <button
+                        key={item.id}
+                        className={`settings-item ${activeSettingsItem === item.id ? 'active' : ''}`}
+                        onClick={() => setActiveSettingsItem(item.id)}
+                      >
+                        <span>{item.label}</span>
+                        {item.badge && (
+                          <span className="settings-item-badge">{item.badge}</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   )
 }
 

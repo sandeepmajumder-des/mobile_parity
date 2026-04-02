@@ -46,7 +46,15 @@
 }
 
 .content-table tbody tr:hover td {
-  background: var(--secondary-50);
+  background: #e6f4ff;
+}
+
+.content-table tbody tr.row-selected td {
+  background: #eff6ff;
+}
+
+.content-table tbody tr.row-selected:hover td {
+  background: #dbeafe;
 }
 
 /* Column widths */
@@ -103,11 +111,114 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
+  position: relative;
 }
 
 .name-text {
   color: var(--secondary-800);
   font-weight: 400;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+/* Play / Edit / More — shown on row hover or keyboard focus */
+.name-cell-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding-left: 8px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.12s ease, visibility 0.12s ease;
+}
+
+.content-table tbody tr:hover .name-cell-actions,
+.content-table tbody tr:focus-within .name-cell-actions {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.name-cell-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--secondary-700);
+  cursor: pointer;
+  border-radius: 6px;
+  line-height: 0;
+}
+
+.name-cell-action-btn:focus-visible {
+  outline: 2px solid var(--info-400);
+  outline-offset: 2px;
+}
+
+.name-cell-action-btn--ghost {
+  width: 32px;
+  height: 32px;
+}
+
+.name-cell-action-btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--secondary-900);
+}
+
+.name-cell-action-btn--edit {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid transparent;
+  box-shadow: none;
+  color: var(--secondary-700);
+}
+
+.name-cell-action-btn--edit:hover,
+.name-cell-tooltip-host:focus-within .name-cell-action-btn--edit {
+  background: #fff;
+  border-color: #d1d5db;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  color: var(--secondary-900);
+}
+
+.name-cell-tooltip-host {
+  position: relative;
+  display: inline-flex;
+}
+
+.name-cell-action-tooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: #fff;
+  background: #1f2937;
+  border-radius: 6px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 20;
+  transition: opacity 0.12s ease, visibility 0.12s ease;
+}
+
+.name-cell-tooltip-host:hover .name-cell-action-tooltip,
+.name-cell-tooltip-host:focus-within .name-cell-action-tooltip {
+  opacity: 1;
+  visibility: visible;
 }
 
 .item-count {
@@ -120,12 +231,10 @@
   border-radius: 32px;
 }
 
-/* Type cell */
-.type-cell {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* Type label */
+.type-label {
   color: var(--secondary-800);
+  font-size: 14px;
 }
 
 /* Platform cell */

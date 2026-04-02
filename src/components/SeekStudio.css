@@ -1,0 +1,132 @@
+/* Seek studio — side panel (V2 wf-seek-panel parity) */
+.seek-studio-panel-inner {
+  padding: 0 !important;
+  overflow: auto;
+}
+
+.seek-studio-panel {
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+.seek-studio-url-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.seek-studio-url-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.seek-studio-url-counter {
+  font-weight: 500;
+  color: #9ca3af;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.seek-studio-url-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #6b7280;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.seek-studio-capture-illustration {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.seek-studio-capture-icon {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.seek-studio-cursor-icon {
+  position: absolute;
+  right: 4px;
+  bottom: 6px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.12));
+}
+
+.seek-studio-description {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #4b5563;
+  text-align: center;
+}
+
+.seek-studio-start-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 18px;
+  border: none;
+  border-radius: 10px;
+  background: #c84900;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.seek-studio-start-btn:hover {
+  background: #a33d00;
+}
+
+.seek-studio-phone-ready {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  text-align: center;
+}
+
+.seek-studio-phone-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.seek-studio-phone-caption {
+  margin: 0;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.seek-studio-phone-chrome {
+  width: 88%;
+  max-width: 200px;
+  height: 120px;
+  border-radius: 12px;
+  border: 2px dashed rgba(200, 73, 0, 0.35);
+  background: linear-gradient(180deg, #fff 0%, #f9fafb 100%);
+}
